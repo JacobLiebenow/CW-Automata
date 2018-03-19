@@ -38,4 +38,9 @@ All classes will have a "store" and "pull" function to add or view data from Goo
 
 
 CHANGELOG:
-3/19/2018 - Changed from Java to Python, shifted software structure to more greatly-defined object oriented design, created class structures outline, intent of "store" and "pull" methods, basic attributes mentioned in objectives
+3/19/2018:
+  -Changed from Java to Python
+  -Shifted software structure to more greatly-defined object oriented design
+  -Created class structures outline
+  -Noted intent of "store" and "pull" methods
+  -Basic class attributes mentioned in objectives
