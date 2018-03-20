@@ -9,11 +9,9 @@ Objectives:
 (4) listing all venues-per-city
 (5) bands-per-city
 (6) promoters/bookers-per-city
-
 (7) it becomes a consolidated reference guide
 (8) with data from the DB's
 (9) the new viral data
-
 (10) and essentially one just needs to glance the day of tour they're working on here
 (11) and they have all the emails
 (12) facebook page links
@@ -21,17 +19,15 @@ Objectives:
 (14) and perhaps even history of our activity in the region
 (15) successes/ failures."
  
- 
- 
- 
- 
 Overall class structures:
--TourDate class 
--City class
--Contacts class
-  >Bands class
-  >Bookers class
--Venues class
+  -TourDate class
+  -Data Center class
+  -State class 
+  -City class
+  -Contacts class
+  	>Bands class
+  	>Bookers class
+  -Venues class
 
 All classes will have a "store" and "pull" function to add or view data from Google Sheets.
 
@@ -44,3 +40,11 @@ CHANGELOG:
   -Created class structures outline
   -Noted intent of "store" and "pull" methods
   -Basic class attributes mentioned in objectives
+
+3/20/2018
+  -Added signature, documentation, and commentary to all active modules
+  -Added datacenter.py as a general management object to handle all active objects and act as the link to Google
+  -Added database-like qualities to state.py, city.py, venue.py, and datacenter.py
+  -Added searching functionality to state and city objects - will add to venue ibn near future
+	  >As an aside, the select functions act similarly to data pointers
+  -Created test cases and test data population for main.py - was able to access all data as intended thus far
