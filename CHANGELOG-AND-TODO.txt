@@ -20,7 +20,7 @@ Objectives:
 (15) successes/ failures."
  
 Overall class structures:
-  -TourDate class
+  -Tour Date class
   -Data Center class
   -State class 
   -City class
