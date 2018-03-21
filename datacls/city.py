@@ -31,3 +31,15 @@ class City:
 	def printVenues(self):
 		for venue in self.venues:
 			print("----->", venue.venueName)
+			
+	def selectVenue(self, venueName):
+		venueFound = False
+		
+		for venue in self.venues:
+			if venueName == venue.venueName:
+				venueFound = True
+				return venue
+		
+		if venueFound == False:
+			print("No venue found by the name '", venueName, "'")
+			return None
