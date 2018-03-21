@@ -17,6 +17,7 @@ from datacls import state
 from datacls import city
 from datacls import venue
 from datacls import datacenter
+from datacls import dayinfo
 
 #The database can effectively be traversed using the "pointer" variables province, town, and showstage.
 #Using this, exact positions in memory can be editted, thus allowing for interchangability of inheritance.
@@ -26,7 +27,9 @@ def main():
 	#These are simply test cases
 	database = datacenter.Datacenter()
 	
-	#Creating the state of Ohio, and adding it to the database
+	#Creating the states of Ohio and Illinois, and adding it to the database
+	province = state.State("Illinois")
+	database.addState(province)
 	province = state.State("Ohio")
 	database.addState(province)
 	
@@ -57,11 +60,49 @@ def main():
 	#Print all state-related data within the datacenter object
 	database.printStates()
 	
+	#Select a state not present in the database already to test a false response
+	province = database.selectState("Pennsyltucky")
 	
-	province = database.selectState("Indiana")
 	
-	#This is only in the code so that the console remains open if run via double-click as opposed to shell
-	input()
+	#Generating a test day in the database, and seeing how it handles crossover of objects
+	newDay = dayinfo.DayInfo(2018,4,1,database)
+	province = database.selectState("Ohio")
+	provinceName = province.stateName
+	town = province.selectCity("Columbus")
+	townName = town.cityName
+	showstage = town.selectVenue("Kafe Kerouac")
+	stageName = showstage.venueName
+	newDay.addState(provinceName)
+	newDay.addCity(provinceName, townName)
+	newDay.addVenue(provinceName, townName, stageName)
+	showstage = town.selectVenue("Ace of Cups")
+	stageName = showstage.venueName
+	newDay.addVenue(provinceName, townName, stageName)
+	
+	print()
+	print("On",newDay.calendarDate,"you will be in the state(s) of..")
+	newDay.printStates()
+	print("While there, you will visit....")
+	newDay.printCities()
+	print("and perform at......")
+	newDay.printVenues()
+	
+	print()
+	newDay.removeVenue(provinceName, townName, stageName)
+	print("REMOVED KAFE KEROUAC")
+	print("On",newDay.calendarDate,"you will be in the state(s) of..")
+	newDay.printStates()
+	print("While there, you will visit....")
+	newDay.printCities()
+	print("and perform at......")
+	newDay.printVenues()
+	
+	print()
+	print()
+	print("Database check")
+	database.printStates()
+	
+	
 
 if __name__ == '__main__':
 	main()
