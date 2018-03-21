@@ -12,6 +12,7 @@
 from datacls import state
 from datacls import city
 from datacls import venue
+from datacls import dayinfo
 
 class Datacenter: 
 	
@@ -21,7 +22,8 @@ class Datacenter:
 	#The datacenter's primary branches are provinces/states, which contain cities, venues, etc.  However, I
 	#also want to allow for a separate type of branch from the datacenter root - contacts, which contains
 	#bands, bookers, promoters, and whoever else might be considered relevant.  Contacts might normally be
-	#organized by city, but I'd like overall contact searching functionality irrespective of location
+	#organized by city, but I'd like overall contact searching functionality irrespective of location.  Another
+	#possible branch - days, which has one or more associated states/cities (otherwise considered travel days)
 	def __init__(self, states=None):
 		if states is None:
 			self.states = []
