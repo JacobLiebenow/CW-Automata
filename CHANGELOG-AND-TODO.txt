@@ -31,6 +31,30 @@ Overall class structures:
 
 All classes will have a "store" and "pull" function to add or view data from Google Sheets.
 
+Two primary objectives exist for the overall program functionality:
+	1) A calendar which has associated tour date information, city information, etc.
+	2) A database from which to draw upon and build said calendar
+Think two buttons - one to manipulate the calendar on top, another on the bottom to manipulate the database - on the
+main menu.  Those lead to their respective main pages.  
+
+Calendar contains:
+	-A literal calendar (top left), days selectable, which opens the data for the day
+	-The data for the selected day (initiated blank until day selected) (bottom left)
+	-A map (Google maps?) showing the location for the day (full right), including a potential route if the day
+	contains multiple locations, and a route from your current location (potentially show sleep spots?)
+	-"Add/remove new city to/from date" button (below data selected for day, venues optional, shows all contacts)
+
+Database contains:
+	-A hyperlink to the Google spreadsheet interfacing with the data (and ability to c+p sheet link) (top)
+		>Days, states, cities, contacts all have their own sheets within full speadsheet itself
+	-Dropdown list to select each individual state (below hyperlink)
+	-Dropdown list to select each city within that state (plus new/delete city button) (below state)
+	-Venue dropdown list with associated city (plus new/delete venue button) (below city, left side)
+	-Venue information (below dropdown)
+	-Contacts dropdown within city (plus new/delete contact buttons) (below city, right side, filtered for venue)
+	-Contact information (below dropdown)
+
+
 
 
 CHANGELOG:
@@ -46,5 +70,13 @@ CHANGELOG:
   -Added datacenter.py as a general management object to handle all active objects and act as the link to Google
   -Added database-like qualities to state.py, city.py, venue.py, and datacenter.py
   -Added searching functionality to state and city objects - will add to venue ibn near future
-	  >As an aside, the select functions act similarly to data pointers
+	>As an aside, the select functions act similarly to data pointers
   -Created test cases and test data population for main.py - was able to access all data as intended thus far
+
+3/21/2018
+  -Created written wireframe of app and GUI design
+  -Created outline of Google Sheet structure
+  -Added dayinfo.py, allowing for individual days on the calendar to contain and manipulate location and
+  performance info
+  	>Adding states, cities, locations, etc. require only the names now instead of a full class
+	>Ideally, this will make future development easier, especially when it comes to creating GUI dropdown menus	
