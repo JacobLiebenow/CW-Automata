@@ -45,7 +45,12 @@ class DayInfo:
 				self.venueNumber += 1
 			
 	
-	
+	#The way a day will store its data will be a little different from the other classes.
+	#Similar to datacenter, it will select states, cities, and venues based off their names.  However, 
+	#the states, cities, and venues, while being identical to that info stored in the datacenter, will
+	#be copies of those objects as opposed to the objects themselves.
+	#
+	#These functions add states, cities, and venues found in the Datacenter object...
 	def addState(self, stateName):
 		statePointer = self.datacenter.selectState(stateName)
 		if statePointer not in self.states:
@@ -72,7 +77,9 @@ class DayInfo:
 			self.venueNumber += 1
 		else: 
 			print("Venue by the name of '",venueName,"' not found.  Check spelling or if the venue was in the database.")
-			
+	
+
+	#...remove states, cities, and venues found in the DayInfo object...
 	def removeState(self, stateName):
 		statePointer = self.datacenter.selectState(stateName)
 		if statePointer in self.states:
@@ -94,6 +101,8 @@ class DayInfo:
 			self.venues.remove(venuePointer)
 			self.venueNumber -= 1
 	
+	
+	#...and print data from the DayInfo object.
 	def printStates(self):
 		for state in self.states:
 			print(state.stateName)
