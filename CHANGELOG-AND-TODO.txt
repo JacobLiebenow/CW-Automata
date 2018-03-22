@@ -79,4 +79,12 @@ CHANGELOG:
   -Added dayinfo.py, allowing for individual days on the calendar to contain and manipulate location and
   performance info
   	>Adding states, cities, locations, etc. require only the names now instead of a full class
-	>Ideally, this will make future development easier, especially when it comes to creating GUI dropdown menus	
+	>Ideally, this will make future development easier, especially when it comes to creating GUI dropdown menus
+  -Added additional test cases to main.py
+
+3/22/2018
+  -Created the contact class to help manage individuals in addition to locations and dates
+  -Created band class to contain multiple contacts
+	>All roles able to be defined, multiple roles can be defined per contact, as well as per band
+  -Expanded modules (particular venue.py) to accommodate the inclusion of contacts
+  -Added more commentary and documentation
