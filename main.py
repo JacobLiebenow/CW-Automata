@@ -18,6 +18,8 @@ from datacls import city
 from datacls import venue
 from datacls import datacenter
 from datacls import dayinfo
+from datacls import contact
+from datacls import band
 
 #The database can effectively be traversed using the "pointer" variables province, town, and showstage.
 #Using this, exact positions in memory can be editted, thus allowing for interchangability of inheritance.
@@ -89,7 +91,7 @@ def main():
 	
 	print()
 	newDay.removeVenue(provinceName, townName, stageName)
-	print("REMOVED KAFE KEROUAC")
+	print("REMOVED ACE OF CUPS")
 	print("On",newDay.calendarDate,"you will be in the state(s) of..")
 	newDay.printStates()
 	print("While there, you will visit....")
@@ -101,6 +103,33 @@ def main():
 	print()
 	print("Database check")
 	database.printStates()
+	
+	###################
+	######CONTACT######
+	######TESTING######
+	###################
+	
+	newContact = contact.Contact(database, "Sandeep", "123 House With No Name Dr.", 6145555555, "cool.email@email.com")
+	database.addContact(newContact)
+	newContact = database.selectContact("Sandeep")
+	newBand = band.Band("Canadian Waves")
+	newBand.addRole("Manager", newContact)
+	newBand.addRole("DIY Artist", newContact)
+	
+	print()
+	print()
+	newContact.printRoles()
+	
+	showstage = venue.Venue("THWNN")
+	province = database.selectState("Ohio")
+	town = province.selectCity("Columbus")
+	town.addVenue(showstage)
+	showstage.addManager("Former Owner",newContact)
+	
+	print()
+	print("Added THWNN to Columbus")
+	print()
+	newContact.printRoles()
 	
 	
 
