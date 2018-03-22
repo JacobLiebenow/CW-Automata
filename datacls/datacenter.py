@@ -1,5 +1,7 @@
 #Written by: Jacob S Liebenow
 #
+#
+#
 #This module was created upon the determination that a general, all-encompassing data unit with which to
 #place all other objects within was necessary - a general "sheet," if you will, that's able to point
 #to all other data points.  This, decidedly, should make it easier to manipulate data using interchangable
@@ -13,6 +15,8 @@ from datacls import state
 from datacls import city
 from datacls import venue
 from datacls import dayinfo
+from datacls import contact
+from datacls import band
 
 class Datacenter: 
 	
@@ -24,11 +28,21 @@ class Datacenter:
 	#bands, bookers, promoters, and whoever else might be considered relevant.  Contacts might normally be
 	#organized by city, but I'd like overall contact searching functionality irrespective of location.  Another
 	#possible branch - days, which has one or more associated states/cities (otherwise considered travel days)
-	def __init__(self, states=None):
+	def __init__(self, states=None, contacts=None, bands=None):
 		if states is None:
 			self.states = []
 		else: 
 			self.states = states
+		
+		if contacts is None:
+			self.contacts = []
+		else:
+			self.contacts = contacts
+			
+		if bands is None:
+			self.bands = []
+		else:
+			self.bands = bands
 	
 	
 	#The following 3 functions are self-explanatory by title - add, remove, and print states
@@ -59,3 +73,57 @@ class Datacenter:
 		if stateFound == False:
 			print("No state found by the name '",stateName,"'")
 			return None
+			
+	
+	
+	#The datacenter should be the primary table for contact object management
+	def addContact(self, contact):
+		if contact not in self.contacts:
+			self.contacts.append(contact)
+	
+	def removeContact(self, contact):
+		if contact in self.contacts:
+			self.contacts.remove(contact)
+			
+	def printContacts(self):
+		for contact in self.contacts:
+			print(contact.name)
+			
+	def selectContact(self, contactName):
+		contactFound = False
+		
+		for contact in self.contacts:
+			if contactName == contact.name:
+				contactFound = True
+				return contact
+		
+		if contactFound == False:
+			print("No contact found by the name of '",contactName,"'")
+			print("Check spelling and make sure contact was initialized")
+	
+	
+	
+	#The datacenter will manage band objects, as well
+	def addBand(self, band):
+		if band not in self.bands:
+			self.bands.append(band)
+			
+	def removeBand(self, band):
+		if band in self.band:
+			self.bands.remove(band)
+			
+	def printBands(self):
+		for band in self.bands:
+			print(band.bandName)
+			
+	def selectBand(self, bandName):
+		bandFound = False
+		
+		for band in self.bands:
+			if bandName == band.bandName:
+				bandFound = True
+				return band
+			
+		if bandFound == False:
+			print("No band found by the name of '",bandName,"'")
+			print("Check spelling and make sure contact was initialized")
