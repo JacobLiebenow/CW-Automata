@@ -88,3 +88,10 @@ CHANGELOG:
 	>All roles able to be defined, multiple roles can be defined per contact, as well as per band
   -Expanded modules (particular venue.py) to accommodate the inclusion of contacts
   -Added more commentary and documentation
+
+3/23/2018  (UPDATED TO InDev 0.0.3)
+  -Name of software chosen: "Waves In Motion"
+  -Shifted test functions in main.py to a new file in the root directory of the repository, test.py
+  -Added Kivy framework to app for GUI
+  -Drew physical wireframe for the app
+  -Created basic GUI for the main menu
