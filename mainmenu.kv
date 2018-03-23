@@ -1,0 +1,31 @@
+#: import main main
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+
+MainMenuLayout:
+
+<MainMenuLayout>:
+	orientation: "vertical"
+	padding: 40
+	spacing: 40
+	
+	BoxLayout:
+		size_hint_y: 10
+		Label:
+			text: "Welcome to Waves In Motion"
+		
+	BoxLayout:
+		size_hint_y: None
+		height:"40dp"
+		Button:
+			text: "Database"
+			size_hint_x: 15
+			on_press: root.goToDatabase()
+		
+	
+	BoxLayout:
+		size_hint_y: None
+		height: "40dp"
+		Button:
+			text: "Calendar"
+			size_hint_x: 15
+			on_press: root.goToCalendar()
