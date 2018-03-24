@@ -95,3 +95,7 @@ CHANGELOG:
   -Added Kivy framework to app for GUI
   -Drew physical wireframe for the app
   -Created basic GUI for the main menu
+
+3/24/2018
+  -Added database and calendar pages to WavesInMotion App, in addition to screen-swapping functionality
+  -Archived the app's primary .kv file and replaced it with Builder.load_string function
