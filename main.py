@@ -24,6 +24,12 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.listview import ListItemButton
 
+#Import MapView
+from kivy.garden.mapview import MapView
+
+#Import geopy
+from geopy import geocoders
+
 #Import custom classes
 from datacls import state
 from datacls import city
@@ -35,6 +41,8 @@ from datacls import band
 
 kivy.require('1.9.0')
 Builder.load_string("""
+#:import MapSouce mapview.MapSource
+
 <ScreenMainMenu>:
 	orientation: "vertical"
 	padding: 40
@@ -52,7 +60,7 @@ Builder.load_string("""
 		size_hint_y: 0.25
 		pos_hint: {"center_x": 0.5, "y": 0}
 		Button:
-			text: "Database"
+			text: "Database Manager"
 			pos_hint: {"center_x": 0.5, "top": 1}
 			size_hint_x: 0.5
 			size_hint_y: 0.5
@@ -78,65 +86,127 @@ Builder.load_string("""
 	padding: 20
 	spacing: 40
 	RelativeLayout:
-		size_hint_y: None
-		height:"60dp"
+		size_hint_y: 0.02
 		pos_hint: {"center_x": 0.5, "top": 1}
+	RelativeLayout:
+		size_hint_y: 0.18
+		pos_hint: {"center_x": 0.5, "top": 0.98}
 		Label:
 			halign: "center"
 			valign: "center"
-			text: "Database"
+			text: "Database Manager"
+		
 		Button:
 			size_hint_x: None
 			size_hint_y: None
 			height:"40dp"
 			length:"40dp"
 			text: "Back"
-			pos_hint: {"right": 0.99, "center_y": 0.5}
+			pos_hint: {"right": 0.99, "top": 1}
 			on_press:
 				root.manager.transition.direction = "right"
 				root.manager.transition.duration = 0.5
 				root.manager.current = "screen_mainmenu"
+		BoxLayout:
+			size_hint_y: 0.3
+			size_hint_x: 0.8
+			pos_hint: {"center_x": 0.5, "bottom": 0}
+			Label:
+				size_hint_x: 0.2
+				text:"Link to Database"
+			TextInput:
+				size_hint_x: 0.6
+				id: spreadsheet
+				pos_hint: {"left": 0, "bottom": 0}
+			Button:
+				size_hint_x: 0.2
+				text: "Submit"
+				pos_hint: {"right": 1, "bottom": 0}
 			
 <ScreenCalendar>
+	spreadsheetLink: spreadsheet
+	datetimePicker: datetime
 	orientation: "vertical"
 	padding: 20
 	spacing: 40
 	RelativeLayout:
-		size_hint_y: None
-		height:"60dp"
+		size_hint_y: 0.02
 		pos_hint: {"center_x": 0.5, "top": 1}
+	RelativeLayout:
+		size_hint_y: 0.18
+		pos_hint: {"center_x": 0.5, "top": 0.98}
 		Label:
 			halign: "center"
 			valign: "center"
 			text: "Calendar"
+		
 		Button:
 			size_hint_x: None
 			size_hint_y: None
 			height:"40dp"
 			length:"40dp"
 			text: "Back"
-			pos_hint: {"right": 0.99, "center_y": 0.5}
+			pos_hint: {"right": 0.99, "top": 1}
 			on_press:
 				root.manager.transition.direction = "right"
 				root.manager.transition.duration = 0.5
 				root.manager.current = "screen_mainmenu"
-			
+		BoxLayout:
+			size_hint_y: 0.3
+			size_hint_x: 0.8
+			pos_hint: {"center_x": 0.5, "bottom": 0}
+			Label:
+				size_hint_x: 0.1
+				text:"Database:  "
+			TextInput:
+				size_hint_x: 0.7
+				id: spreadsheet
+				pos_hint: {"left": 0, "bottom": 0}
+			Button:
+				size_hint_x: 0.2
+				text: "Submit"
+				pos_hint: {"right": 1, "bottom": 0}
+		
+	RelativeLayout:	
+		size_hint_y: 0.8
+		pos_hint: {"center_x": 0.5, "bottom": 0}
+		Button:
+			id: datetime
+			size_hint_y: 0.5
+			size_hint_x: 0.3
+			pos_hint: {"left": 0, "top": 1}
+		Button:
+			size_hint_y: 0.5
+			size_hint_x: 0.3
+			pos_hint: {"left": 0, "bottom": 0}
+			text: "Day Info"
+		MapView:	
+			size_hint_x: 0.7
+			size_hint_y: 1
+			pos_hint: {"right": 1, "bottom": 0}
+			id: mapview
+			lat: 50.6394
+			lon: 3.057
+			zoom: 8
+	
 """)
 
 class ScreenMainMenu(Screen):
 	pass
 	
 class ScreenDatabase(Screen):
-	pass
+	spreadsheetLink = ObjectProperty()
 
 class ScreenCalendar(Screen):
-	pass
+	spreadsheetLink = ObjectProperty()
+		
 
 screenManager = ScreenManager()
 
 screenManager.add_widget(ScreenMainMenu(name="screen_mainmenu"))
 screenManager.add_widget(ScreenDatabase(name="screen_database"))
 screenManager.add_widget(ScreenCalendar(name="screen_calendar"))
+
 	
 class WavesInMotion(App):
 	
