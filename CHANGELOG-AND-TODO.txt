@@ -99,3 +99,8 @@ CHANGELOG:
 3/24/2018
   -Added database and calendar pages to WavesInMotion App, in addition to screen-swapping functionality
   -Archived the app's primary .kv file and replaced it with Builder.load_string function
+
+3/26/2018
+  -Created Calendar screen coded wireframe
+  -Added MapView, need to create own calendar widget for this specific purpose
+  -Tried several calendar and datepicker widgets, all had bugs
