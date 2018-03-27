@@ -104,3 +104,10 @@ CHANGELOG:
   -Created Calendar screen coded wireframe
   -Added MapView, need to create own calendar widget for this specific purpose
   -Tried several calendar and datepicker widgets, all had bugs
+
+3/27/2018
+  -Added datetime module to main.py
+  -Created functioning calendar data management class - GUI to come tomorrow
+	>Contains incrementMonth and decrementMonth functions
+	>Plan on creating 6 rows of horizontal listviews with listviewadapters to allow dates to be selected
+		+Should mesh well with the DayInfo box to come after
