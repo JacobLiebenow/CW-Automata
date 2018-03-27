@@ -30,6 +30,9 @@ from kivy.garden.mapview import MapView
 #Import geopy
 from geopy import geocoders
 
+#Import Calendar classes
+import datetime
+
 #Import custom classes
 from datacls import state
 from datacls import city
@@ -191,6 +194,125 @@ Builder.load_string("""
 	
 """)
 
+#Create the base calendar class for use as a widget in the Calendar screen
+class Calendar():
+	
+	def __init__(self, tday):
+		#Create the general data structure of the calendar - 6 rows of 7 days each
+		self.fillerDate = datetime.date.today()
+		self.tdelta = datetime.timedelta(days=1)
+		self.row1 = [self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate]
+		self.row2 = []
+		self.row3 = []
+		self.row4 = []
+		self.row5 = []
+		self.row6 = []
+		self.calendarObj = [self.row1, self.row2, self.row3, self.row4, self.row5, self.row6]
+		self.today = tday
+		self.rowIncrementerIndex = 0
+		self.day = datetime.date(tday.year,tday.month,1)
+		self.dayPlaceholder = datetime.date(tday.year,tday.month,1)
+		self.currentYear = tday.year
+		self.currentMonth = tday.month
+		
+		#Populate calendar for the current month
+		self.row1[self.day.weekday()] = self.day
+		if self.day.weekday() != 0:
+			while self.day.weekday() != 0:
+				self.day -= self.tdelta
+				self.row1[self.day.weekday()] = self.day
+			self.day = self.dayPlaceholder
+		while self.day.weekday() != 6:
+			self.day += self.tdelta
+			self.row1[self.day.weekday()] = self.day
+		self.rowIncrementerIndex += 1
+		self.day += self.tdelta
+		while self.rowIncrementerIndex != 6:
+			while self.day.weekday() != 6:
+				self.calendarObj[self.rowIncrementerIndex].append(self.day)
+				self.day += self.tdelta
+			if self.rowIncrementerIndex != 6:
+				self.calendarObj[self.rowIncrementerIndex].append(self.day)
+				self.day += self.tdelta
+			self.rowIncrementerIndex += 1
+		
+		for row in self.calendarObj:
+			for day in row:
+				print(day)
+		#Reset the row incrementer so the decrement and increment month functions can reuse variable
+		self.rowIncrementerIndex = 0
+	
+	def update(self, day):
+		#Reset the general data structure of the calendar
+		self.fillerDate = datetime.date.today()
+		self.tdelta = datetime.timedelta(days=1)
+		self.row1 = [self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate, self.fillerDate]
+		self.row2 = []
+		self.row3 = []
+		self.row4 = []
+		self.row5 = []
+		self.row6 = []
+		self.calendarObj = [self.row1, self.row2, self.row3, self.row4, self.row5, self.row6]
+		self.rowIncrementerIndex = 0
+		self.day = day
+		self.dayPlaceholder = day
+		
+		#Populate calendar for the chosen month
+		self.row1[self.day.weekday()] = self.day
+		if self.day.weekday() != 0:
+			while self.day.weekday() != 0:
+				self.day -= self.tdelta
+				self.row1[self.day.weekday()] = self.day
+			self.day = self.dayPlaceholder
+		while self.day.weekday() != 6:
+			self.day += self.tdelta
+			self.row1[self.day.weekday()] = self.day
+		self.rowIncrementerIndex += 1
+		self.day += self.tdelta
+		while self.rowIncrementerIndex != 6:
+			while self.day.weekday() != 6:
+				self.calendarObj[self.rowIncrementerIndex].append(self.day)
+				self.day += self.tdelta
+			if self.rowIncrementerIndex != 6:
+				self.calendarObj[self.rowIncrementerIndex].append(self.day)
+				self.day += self.tdelta
+			self.rowIncrementerIndex += 1
+			
+		for row in self.calendarObj:
+			for day in row:
+				print(day)
+		
+		#Reset the row incrementer so the decrement and increment month functions can reuse variable
+		self.rowIncrementerIndex = 0
+	
+	
+	
+	#Self-explanatory functions to increment/decrement the month when a button is pressed
+	def incrementMonth(self):
+		self.currentMonth += 1
+		if self.currentMonth > 12:
+			self.currentMonth = 1
+			self.currentYear += 1
+		day = datetime.date(self.currentYear, self.currentMonth, 1)
+		print()
+		print("Up Month")
+		print()
+		print()
+		self.update(day)
+			
+	def decrementMonth(self):
+		self.currentMonth -= 1
+		if self.currentMonth < 1:
+			self.currentMonth = 12
+			self.currentYear -= 1
+		day = datetime.date(self.currentYear, self.currentMonth, 1)
+		print()
+		print("Down Month")
+		print()
+		print()
+		self.update(day)
+		
+
 class ScreenMainMenu(Screen):
 	pass
 	
@@ -199,6 +321,8 @@ class ScreenDatabase(Screen):
 
 class ScreenCalendar(Screen):
 	spreadsheetLink = ObjectProperty()
+	today = datetime.date.today()
+	calendar = Calendar(today)
 		
 
 screenManager = ScreenManager()
