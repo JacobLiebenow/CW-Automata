@@ -22,7 +22,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
-from kivy.uix.listview import ListItemButton
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.button import Button
 
 #Import MapView
 from kivy.garden.mapview import MapView
@@ -44,7 +45,7 @@ from datacls import band
 
 kivy.require('1.9.0')
 Builder.load_string("""
-#:import MapSouce mapview.MapSource
+#: import MapSouce mapview.MapSource
 
 <ScreenMainMenu>:
 	orientation: "vertical"
@@ -116,7 +117,7 @@ Builder.load_string("""
 			pos_hint: {"center_x": 0.5, "bottom": 0}
 			Label:
 				size_hint_x: 0.2
-				text:"Link to Database"
+				text:"Database:  "
 			TextInput:
 				size_hint_x: 0.6
 				id: spreadsheet
@@ -128,7 +129,6 @@ Builder.load_string("""
 			
 <ScreenCalendar>
 	spreadsheetLink: spreadsheet
-	datetimePicker: datetime
 	orientation: "vertical"
 	padding: 20
 	spacing: 40
@@ -173,11 +173,25 @@ Builder.load_string("""
 	RelativeLayout:	
 		size_hint_y: 0.8
 		pos_hint: {"center_x": 0.5, "bottom": 0}
-		Button:
-			id: datetime
+		RelativeLayout:
 			size_hint_y: 0.5
 			size_hint_x: 0.3
 			pos_hint: {"left": 0, "top": 1}
+			MonthSelector:
+				orientation: "horizontal"
+				size_hint_y: 0.3
+				pos_hint: {"center_x":0.5, "top":1}
+				
+			CalendarView:
+				size_hint_y: 0.7
+				pos_hint: {"center_x":0.5, "bottom":0}
+				viewclass: 'Button'
+				RecycleGridLayout:
+					cols: 7
+					default_size: None, dp(20)
+					default_size_hint: 1, None
+					height: self.minimum_height
+
 		Button:
 			size_hint_y: 0.5
 			size_hint_x: 0.3
@@ -212,8 +226,8 @@ class Calendar():
 		self.rowIncrementerIndex = 0
 		self.day = datetime.date(tday.year,tday.month,1)
 		self.dayPlaceholder = datetime.date(tday.year,tday.month,1)
-		self.currentYear = tday.year
-		self.currentMonth = tday.month
+		self.currentYear = self.day.year
+		self.currentMonth = self.day.month
 		
 		#Populate calendar for the current month
 		self.row1[self.day.weekday()] = self.day
@@ -236,11 +250,15 @@ class Calendar():
 				self.day += self.tdelta
 			self.rowIncrementerIndex += 1
 		
-		for row in self.calendarObj:
-			for day in row:
-				print(day)
 		#Reset the row incrementer so the decrement and increment month functions can reuse variable
 		self.rowIncrementerIndex = 0
+		
+		#Create flat calendar data
+		self.calendarObjFlat = []
+		for row in self.calendarObj:
+			for day in row:
+				self.calendarObjFlat.append(day)
+				
 	
 	def update(self, day):
 		#Reset the general data structure of the calendar
@@ -278,12 +296,15 @@ class Calendar():
 				self.day += self.tdelta
 			self.rowIncrementerIndex += 1
 			
-		for row in self.calendarObj:
-			for day in row:
-				print(day)
 		
 		#Reset the row incrementer so the decrement and increment month functions can reuse variable
 		self.rowIncrementerIndex = 0
+		
+		#Update flat calendar data
+		self.calendarObjFlat = []
+		for row in self.calendarObj:
+			for day in row:
+				self.calendarObjFlat.append(day)
 	
 	
 	
@@ -294,11 +315,6 @@ class Calendar():
 			self.currentMonth = 1
 			self.currentYear += 1
 		day = datetime.date(self.currentYear, self.currentMonth, 1)
-		print()
-		print("Up Month")
-		print()
-		print()
-		self.update(day)
 			
 	def decrementMonth(self):
 		self.currentMonth -= 1
@@ -306,13 +322,67 @@ class Calendar():
 			self.currentMonth = 12
 			self.currentYear -= 1
 		day = datetime.date(self.currentYear, self.currentMonth, 1)
-		print()
-		print("Down Month")
-		print()
-		print()
-		self.update(day)
-		
 
+#Multiple classes will share the same calendar data, thus it is instantiated here
+today = datetime.date.today()
+calendar = Calendar(today)
+
+#Management of the date view
+class CalendarView(RecycleView):
+		
+	def __init__(self, **kwargs):
+		super(CalendarView, self).__init__(**kwargs)
+		self.data = []
+		for day in calendar.calendarObjFlat:
+			print()
+			print("Full date")
+			print(day)
+			print("Day's month:")
+			print(day.month)
+			print("Selected month:")
+			print(calendar.currentMonth)
+			if day.month != calendar.currentMonth:
+				self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0.1,0.1,0.1,1]})
+			else:
+				self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0,0.4,0.3,1]})
+				
+	def update(self):
+		self.data = []
+		for day in calendar.calendarObjFlat:
+			print()
+			print("Full date")
+			print(day)
+			print("Day's month:")
+			print(day.month)
+			print("Selected month:")
+			print(calendar.currentMonth)
+			# self.data.append({'text': str(day.day)})
+			if day.month != calendar.currentMonth:
+				self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0.1,0.1,0.1,1]})
+			else:
+				self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0,0.4,0.3,1]})
+	
+class MonthSelector(RelativeLayout):
+	def __init__(self, **kwargs):
+		super(MonthSelector, self).__init__(**kwargs)
+		self.backButton = Button(text="<",pos_hint={"left":0,"center_y":0.5},size_hint_x=0.25,size_hint_y=0.5)
+		self.backButton.bind(on_press=self.decrementMonth)
+		self.add_widget(self.backButton)
+		self.monthSelected = Label(text=(str(calendar.currentMonth)+", "+str(calendar.currentYear)))
+		self.add_widget(self.monthSelected)
+		self.forwardButton = Button(text=">",pos_hint={"right":1,"center_y":0.5},size_hint_x=0.25,size_hint_y=0.5)
+		self.forwardButton.bind(on_press=self.incrementMonth)
+		self.add_widget(self.forwardButton)
+	
+	def update(self):
+		self.monthSelected.text=(str(calendar.currentMonth)+", "+str(calendar.currentYear))
+		
+	def decrementMonth(self,instance):
+		pass
+	
+	def incrementMonth(self,instance):
+		pass
+		
 class ScreenMainMenu(Screen):
 	pass
 	
@@ -321,9 +391,8 @@ class ScreenDatabase(Screen):
 
 class ScreenCalendar(Screen):
 	spreadsheetLink = ObjectProperty()
-	today = datetime.date.today()
-	calendar = Calendar(today)
-		
+	MS = MonthSelector()
+	CV = CalendarView()
 
 screenManager = ScreenManager()
 
