@@ -111,3 +111,8 @@ CHANGELOG:
 	>Contains incrementMonth and decrementMonth functions
 	>Plan on creating 6 rows of horizontal listviews with listviewadapters to allow dates to be selected
 		+Should mesh well with the DayInfo box to come after
+
+3/28/2018
+  -Modified calendar substantially - now a RelativeLayout with nested custom widgets, and the actual days are
+  defined using a recycled grid layout
+  -Added substantial functionality to calendar UI
