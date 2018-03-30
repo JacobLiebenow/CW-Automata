@@ -17,7 +17,10 @@ Objectives:
 (12) facebook page links
 (13) bandcamp links
 (14) and perhaps even history of our activity in the region
-(15) successes/ failures."
+(15) successes/ failures.
+
+ADDENDUM:
+Create copy-pastable version for tour date info to pull from google sheets"
  
 Overall class structures:
   -Tour Date class
