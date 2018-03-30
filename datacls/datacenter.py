@@ -28,7 +28,9 @@ class Datacenter:
 	#bands, bookers, promoters, and whoever else might be considered relevant.  Contacts might normally be
 	#organized by city, but I'd like overall contact searching functionality irrespective of location.  Another
 	#possible branch - days, which has one or more associated states/cities (otherwise considered travel days)
-	def __init__(self, states=None, contacts=None, bands=None):
+	def __init__(self, link, states=None, contacts=None, bands=None):
+		self.link = link
+		
 		if states is None:
 			self.states = []
 		else: 
