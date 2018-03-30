@@ -120,3 +120,10 @@ CHANGELOG:
 3/29/2018  (UPDATED TO InDev 0.0.4)
   -Rewrote the Calendar View to add complete functionality (woo!)
   -Rewrote the kv to convert much of the hard-coded widgets to dynamic python-based widgets
+
+3/30/2018
+  -Fixed edge case bugs with Calendar View
+  -Added date selection functionality
+  -Replaced kv for database link management with python equivalent
+  -Added functionality to pass link to Google Sheets to datacenter object via database link management view in GUI
+	>It's finally time to add the ability to link to Google via the submit buttons!
