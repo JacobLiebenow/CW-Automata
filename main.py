@@ -25,10 +25,6 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
 from kivy.properties import ObjectProperty
-# from kivy.uix.recycleview import RecycleView
-# from kivy.uix.recycleview.views import RecycleDataViewBehavior
-# from kivy.uix.behaviors import FocusBehavior
-# from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.button import Button
 
 #Import MapView
@@ -90,51 +86,7 @@ Builder.load_string("""
 		
 		
 				
-
 <ScreenDatabase>
-	orientation: "vertical"
-	padding: 20
-	spacing: 40
-	RelativeLayout:
-		size_hint_y: 0.02
-		pos_hint: {"center_x": 0.5, "top": 1}
-	RelativeLayout:
-		size_hint_y: 0.18
-		pos_hint: {"center_x": 0.5, "top": 0.98}
-		Label:
-			halign: "center"
-			valign: "center"
-			text: "Database Manager"
-		
-		Button:
-			size_hint_x: None
-			size_hint_y: None
-			height:"40dp"
-			length:"40dp"
-			text: "Back"
-			pos_hint: {"right": 0.99, "top": 1}
-			on_press:
-				root.manager.transition.direction = "right"
-				root.manager.transition.duration = 0.5
-				root.manager.current = "screen_mainmenu"
-		BoxLayout:
-			size_hint_y: 0.3
-			size_hint_x: 0.8
-			pos_hint: {"center_x": 0.5, "bottom": 0}
-			Label:
-				size_hint_x: 0.2
-				text:"Database:  "
-			TextInput:
-				size_hint_x: 0.6
-				id: spreadsheet
-				pos_hint: {"left": 0, "bottom": 0}
-			Button:
-				size_hint_x: 0.2
-				text: "Submit"
-				pos_hint: {"right": 1, "bottom": 0}
-			
-<ScreenCalendar>
-	spreadsheetLink: spreadsheet
 	orientation: "vertical"
 	padding: 20
 	spacing: 40
@@ -160,34 +112,49 @@ Builder.load_string("""
 					root.manager.transition.direction = "right"
 					root.manager.transition.duration = 0.5
 					root.manager.current = "screen_mainmenu"
-			BoxLayout:
+			DatabaseManagementDatabaseLinkView:
 				size_hint_y: 0.3
 				size_hint_x: 0.8
 				pos_hint: {"center_x": 0.5, "bottom": 0}
-				Label:
-					size_hint_x: 0.1
-					text:"Database:  "
-				TextInput:
-					size_hint_x: 0.7
-					id: spreadsheet
-					pos_hint: {"left": 0, "bottom": 0}
-				Button:
-					size_hint_x: 0.2
-					text: "Submit"
-					pos_hint: {"right": 1, "bottom": 0}
 		
+
+		
+<ScreenCalendar>
+	orientation: "vertical"
+	padding: 20
+	spacing: 40
+	RelativeLayout:
+		RelativeLayout:
+			size_hint_y: 0.02
+			pos_hint: {"center_x": 0.5, "top": 1}
+		RelativeLayout:
+			size_hint_y: 0.18
+			pos_hint: {"center_x": 0.5, "top": 0.98}
+			Label:
+				halign: "center"
+				valign: "center"
+				text: "Calendar"
+			Button:
+				size_hint_x: None
+				size_hint_y: None
+				height:"40dp"
+				length:"40dp"
+				text: "Back"
+				pos_hint: {"right": 0.99, "top": 1}
+				on_press:
+					root.manager.transition.direction = "right"
+					root.manager.transition.duration = 0.5
+					root.manager.current = "screen_mainmenu"
+			CalendarDatabaseLinkView:
+				size_hint_y: 0.3
+				size_hint_x: 0.8
+				pos_hint: {"center_x": 0.5, "bottom": 0}
 		RelativeLayout:	
 			size_hint_y: 0.8
 			pos_hint: {"center_x": 0.5, "bottom": 0}
-			CalendarManager:
-				size_hint_y: 0.5
+			CalendarViewer:
 				size_hint_x: 0.3
 				pos_hint: {"left": 0, "top": 1}	
-			Button:
-				size_hint_y: 0.5
-				size_hint_x: 0.3
-				pos_hint: {"left": 0, "bottom": 0}
-				text: "Day Info"
 			MapView:	
 				size_hint_x: 0.7
 				size_hint_y: 1
@@ -199,7 +166,7 @@ Builder.load_string("""
 	
 """)
 
-#Create the base calendar class for use as a widget in the Calendar screen
+#Create the base calendar class for use as a widget in the Calendar screen (Model)
 class Calendar():
 	
 	def __init__(self, tday):
@@ -317,7 +284,6 @@ class Calendar():
 		self.update(day)
 		
 	#Returns the Calendar Month as a string (1 = January, 2 = February, etc.)
-	
 	def currentMonthString(self):
 		if self.currentMonth == 1:
 			return "January"
@@ -346,182 +312,194 @@ class Calendar():
 		else:
 			return "MONTH NOT FOUND"
 
-#Multiple classes will share the same calendar data, thus it is instantiated here
+#Multiple classes will share the same data-centric object information, thus they're instantiated here
 today = datetime.date.today()
 calendar = Calendar(today)
-
-# class DateView(GridLayout):
-	# dateView = ObjectProperty()
-	
-	# def __init__(self, **kwargs):
-		# self.cols = 7
-		# self.size_hint_y = 0.7
-		# self.pos_hint = {"center_x":0.5, "bottom":0}	
-		# super(DateView, self).__init__(**kwargs)
-		# self.monLabel = Label(text="Mo")
-		# self.add_widget(self.monLabel)
-		# self.tueLabel = Label(text="Tu")
-		# self.add_widget(self.tueLabel)
-		# self.wedLabel = Label(text="We")
-		# self.add_widget(self.wedLabel)
-		# self.thursLabel = Label(text="Th")
-		# self.add_widget(self.thursLabel)
-		# self.friLabel = Label(text="Fr")
-		# self.add_widget(self.friLabel)
-		# self.satLabel = Label(text="Sa")
-		# self.add_widget(self.satLabel)
-		# self.sunLabel = Label(text="Su")
-		# self.add_widget(self.sunLabel)
-		# for day in calendar.calendarObjFlat:
-			# if day.month != calendar.currentMonth:
-				# self.newButton = Button(text=str(day.day), background_normal="", background_color=[0.1,0.1,0.1,1])
-				# self.add_widget(self.newButton)
-			# else:
-				# self.newButton = Button(text=str(day.day), background_normal="", background_color=[0,0.4,0.3,1])
-				# self.add_widget(self.newButton)
-	
-	# def update(self):
-		# self.dateView.sunLabel.text ="HI"
+datacenter = datacenter.Datacenter("DummyLink")
 		
+#Provide an overall view for the Calendar for managing data provided from the Calendar object (View)
+class CalendarViewer(RelativeLayout):
+	#Define the general layout of the internal widgets of the Calendar
+	monthViewer = RelativeLayout(size_hint_y = 0.15, pos_hint = {"center_x":0.5, "top":1})
+	dateViewer = GridLayout(cols = 7, size_hint_y = 0.35, pos_hint = {"center_x":0.5, "top":0.85})
+	dateInfoViewer = RelativeLayout (size_hint_y = 0.5, pos_hint = {"center_x":0.5, "bottom":0})
+	dateSelected = datetime.date.today()
 	
-#Management of the date view
-# class CalendarView(RecycleView):
-		
-	# def __init__(self, **kwargs):
-		# super(CalendarView, self).__init__(**kwargs)
-		# self.data = []
-		# for day in calendar.calendarObjFlat:
-			# if day.month != calendar.currentMonth:
-				# self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0.1,0.1,0.1,1]})
-			# else:
-				# self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0,0.4,0.3,1]})
-				
-	# def update(self):
-		# self.data = []
-		# for day in calendar.calendarObjFlat:
-			# # self.data.append({'text': str(day.day)})
-			# if day.month != calendar.currentMonth:
-				# self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0.1,0.1,0.1,1]})
-			# else:
-				# self.data.append({'text': str(day.day), 'background_normal':'', 'background_color':[0,0.4,0.3,1]})
-
-# class SelectableButtonSet(RecycleDataViewBehavior, Button):
-	# index = None
-	
-	# def refresh_view_attrs(self, rv, index, data):
-		# self.index = index
-		# return super(SelectableButtonSet, self).refresh_view_attrs(rv, index, data)
-		
-	
-	
-# class SelectableRecycleGridLayout(FocusBehavior, LayoutSelectionBehavior, RecycleGridLayout):
-	# pass
-
-#Management of month selection
-# class MonthSelector(RelativeLayout):
-	# def __init__(self, **kwargs):
-		# self.size_hint_y = 0.3
-		# self.pos_hint = {"center_x":0.5, "top":1}
-		# super(MonthSelector, self).__init__(**kwargs)
-		# self.backButton = Button(text="<",pos_hint={"left":0,"center_y":0.5},size_hint_x=0.25,size_hint_y=0.5)
-		# self.backButton.bind(on_press=self.decrementMonth)
-		# self.add_widget(self.backButton)
-		# self.monthSelected = Label(text=(str(calendar.currentMonth)+", "+str(calendar.currentYear)))
-		# self.add_widget(self.monthSelected)
-		# self.forwardButton = Button(text=">",pos_hint={"right":1,"center_y":0.5},size_hint_x=0.25,size_hint_y=0.5)
-		# self.forwardButton.bind(on_press=self.incrementMonth)
-		# self.add_widget(self.forwardButton)
-	
-	# def update(self):
-		# self.monthSelected.text=(str(calendar.currentMonth)+", "+str(calendar.currentYear))
-		
-	# def incrementMonth(self,instance):
-		# calendar.incrementMonth()
-		# self.update()
-	
-	# def decrementMonth(self,instance):
-		# calendar.decrementMonth()
-		# self.update()
-		
-		
-class CalendarManager(RelativeLayout):
-	monthSelector = RelativeLayout(size_hint_y = 0.3, pos_hint = {"center_x":0.5, "top":1})
-	dateViewer = GridLayout(cols = 7, size_hint_y = 0.7, pos_hint = {"center_x":0.5, "bottom":0})
 	def __init__(self, **kwargs):
-		self.size_hint_y = 0.5
+		self.size_hint_y = 1
 		self.size_hint_x = 0.3
 		self.pos_hint = {"left": 0, "top": 1}
-		super(CalendarManager, self).__init__(**kwargs)
+		super(CalendarViewer, self).__init__(**kwargs)
 		
-		#Add the month selector to the layout
-		self.add_widget(self.monthSelector)
-		self.monthSelector.backButton = Button(text="<",pos_hint={"left":0,"center_y":0.5},size_hint_x=0.25,size_hint_y=0.5)
-		self.monthSelector.backButton.bind(on_press=self.decrementMonth)
-		self.monthSelector.add_widget(self.monthSelector.backButton)
-		self.monthSelector.monthSelected = Label(text=(calendar.currentMonthString()+", "+str(calendar.currentYear)))
-		self.monthSelector.add_widget(self.monthSelector.monthSelected)
-		self.monthSelector.forwardButton = Button(text=">",pos_hint={"right":1,"center_y":0.5},size_hint_x=0.25,size_hint_y=0.5)
-		self.monthSelector.forwardButton.bind(on_press=self.incrementMonth)
-		self.monthSelector.add_widget(self.monthSelector.forwardButton)
+		#Add the month viewer to the layout
+		self.add_widget(self.monthViewer)
+		self.monthViewer.backButton = Button(text = "<", pos_hint = {"left":0,"center_y":0.5}, size_hint_x = 0.25, size_hint_y = 0.5)
+		self.monthViewer.backButton.bind(on_press = self.decrementMonth)
+		self.monthViewer.add_widget(self.monthViewer.backButton)
+		self.monthViewer.monthSelected = Label(text = (calendar.currentMonthString()+", "+str(calendar.currentYear)))
+		self.monthViewer.add_widget(self.monthViewer.monthSelected)
+		self.monthViewer.forwardButton = Button(text = ">", pos_hint = {"right":1,"center_y":0.5}, size_hint_x = 0.25, size_hint_y = 0.5)
+		self.monthViewer.forwardButton.bind(on_press = self.incrementMonth)
+		self.monthViewer.add_widget(self.monthViewer.forwardButton)
 		
 		#Add the date viewer to the layout
 		self.add_widget(self.dateViewer)
-		self.dateViewer.monLabel = Label(text="Mo")
+		self.dateViewer.monLabel = Label(text = "Mo")
 		self.dateViewer.add_widget(self.dateViewer.monLabel)
-		self.dateViewer.tueLabel = Label(text="Tu")
+		self.dateViewer.tueLabel = Label(text = "Tu")
 		self.dateViewer.add_widget(self.dateViewer.tueLabel)
-		self.dateViewer.wedLabel = Label(text="We")
+		self.dateViewer.wedLabel = Label(text = "We")
 		self.dateViewer.add_widget(self.dateViewer.wedLabel)
-		self.dateViewer.thursLabel = Label(text="Th")
+		self.dateViewer.thursLabel = Label(text = "Th")
 		self.dateViewer.add_widget(self.dateViewer.thursLabel)
-		self.dateViewer.friLabel = Label(text="Fr")
+		self.dateViewer.friLabel = Label(text = "Fr")
 		self.dateViewer.add_widget(self.dateViewer.friLabel)
-		self.dateViewer.satLabel = Label(text="Sa")
+		self.dateViewer.satLabel = Label(text = "Sa")
 		self.dateViewer.add_widget(self.dateViewer.satLabel)
-		self.dateViewer.sunLabel = Label(text="Su")
+		self.dateViewer.sunLabel = Label(text = "Su")
 		self.dateViewer.add_widget(self.dateViewer.sunLabel)
 		for day in calendar.calendarObjFlat:
-			if day.month != calendar.currentMonth:
-				self.dateViewer.newButton = Button(text=str(day.day), background_normal="", background_color=[0.1,0.1,0.1,1])
-				self.dateViewer.add_widget(self.dateViewer.newButton)
+			if day.month < calendar.currentMonth:
+				if day.year <= calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.1,0.1,0.1,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
+				elif day.year > calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.2,0.2,0.2,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
+			elif day.month > calendar.currentMonth:
+				if day.year >= calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.2,0.2,0.2,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
+				elif day.year < calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.1,0.1,0.1,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
 			else:
-				self.dateViewer.newButton = Button(text=str(day.day), background_normal="", background_color=[0,0.4,0.3,1])
+				self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0,0.4,0.3,1])
+				self.dateViewer.newButton.bind(on_press = self.dateSelector)
 				self.dateViewer.add_widget(self.dateViewer.newButton)
 				
-	def update(self):
-		self.monthSelector.monthSelected.text=(calendar.currentMonthString()+", "+str(calendar.currentYear))
+		#Add the day info viewer to the layout
+		self.add_widget(self.dateInfoViewer)
+		self.dateInfoViewer.placeholderLabel = Label(text = "DayInfo", pos_hint = {"center_x":0.5,"bottom":0})
+		self.dateInfoViewer.add_widget(self.dateInfoViewer.placeholderLabel)
+				
+	#Remake the dates based off the new month selection
+	def updateMonth(self):
+		self.monthViewer.monthSelected.text = (calendar.currentMonthString()+", "+str(calendar.currentYear))
 		self.dateViewer.clear_widgets()
-		self.dateViewer.monLabel = Label(text="Mo")
+		self.dateViewer.monLabel = Label(text = "Mo")
 		self.dateViewer.add_widget(self.dateViewer.monLabel)
-		self.dateViewer.tueLabel = Label(text="Tu")
+		self.dateViewer.tueLabel = Label(text = "Tu")
 		self.dateViewer.add_widget(self.dateViewer.tueLabel)
-		self.dateViewer.wedLabel = Label(text="We")
+		self.dateViewer.wedLabel = Label(text = "We")
 		self.dateViewer.add_widget(self.dateViewer.wedLabel)
-		self.dateViewer.thursLabel = Label(text="Th")
+		self.dateViewer.thursLabel = Label(text = "Th")
 		self.dateViewer.add_widget(self.dateViewer.thursLabel)
-		self.dateViewer.friLabel = Label(text="Fr")
+		self.dateViewer.friLabel = Label(text = "Fr")
 		self.dateViewer.add_widget(self.dateViewer.friLabel)
-		self.dateViewer.satLabel = Label(text="Sa")
+		self.dateViewer.satLabel = Label(text = "Sa")
 		self.dateViewer.add_widget(self.dateViewer.satLabel)
-		self.dateViewer.sunLabel = Label(text="Su")
+		self.dateViewer.sunLabel = Label(text = "Su")
 		self.dateViewer.add_widget(self.dateViewer.sunLabel)
 		for day in calendar.calendarObjFlat:
-			if day.month != calendar.currentMonth:
-				self.dateViewer.newButton = Button(text=str(day.day), background_normal="", background_color=[0.1,0.1,0.1,1])
-				self.dateViewer.add_widget(self.dateViewer.newButton)
+			if day.month < calendar.currentMonth:
+				if day.year <= calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.1,0.1,0.1,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
+				elif day.year > calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.2,0.2,0.2,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
+			elif day.month > calendar.currentMonth:
+				if day.year >= calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.2,0.2,0.2,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
+				elif day.year < calendar.currentYear:
+					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.1,0.1,0.1,1])
+					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.add_widget(self.dateViewer.newButton)
 			else:
-				self.dateViewer.newButton = Button(text=str(day.day), background_normal="", background_color=[0,0.4,0.3,1])
+				self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0,0.4,0.3,1])
+				self.dateViewer.newButton.bind(on_press = self.dateSelector)
 				self.dateViewer.add_widget(self.dateViewer.newButton)
 		
 	def incrementMonth(self,instance):
 		calendar.incrementMonth()
-		self.update()
+		self.updateMonth()
 	
 	def decrementMonth(self,instance):
 		calendar.decrementMonth()
-		self.update()
+		self.updateMonth()
 	
+	#Obtain the date from the date button pressed
+	def dateSelector(self,instance):
+		monthSelected = calendar.currentMonth
+		yearSelected = calendar.currentYear
+		if instance.background_color == [0,0.4,0.3,1]:
+			self.dateInfoViewer.placeholderLabel.text = (str(monthSelected)+"/"+instance.text+"/"+str(yearSelected))
+			self.dateSelected = datetime.date(yearSelected, monthSelected, int(instance.text))
+		elif instance.background_color == [0.1,0.1,0.1,1]:
+			monthSelected -= 1
+			if monthSelected < 1:
+				monthSelected = 12
+				yearSelected -= 1
+			self.dateInfoViewer.placeholderLabel.text = (str(monthSelected)+"/"+instance.text+"/"+str(yearSelected))
+			self.dateSelected = datetime.date(yearSelected, monthSelected, int(instance.text))
+		elif instance.background_color == [0.2,0.2,0.2,1]:
+			monthSelected += 1
+			if monthSelected > 12:
+				monthSelected = 1
+				yearSelected += 1
+			self.dateInfoViewer.placeholderLabel.text = (str(monthSelected)+"/"+instance.text+"/"+str(yearSelected))
+			self.dateSelected = datetime.date(yearSelected, monthSelected, int(instance.text))
+
+#Handle the Google Sheets database link management (two made - one for the database management page, one for the calendar page)
+class DatabaseManagementDatabaseLinkView(BoxLayout):
+	generalLayout = BoxLayout()
+	
+	def __init__(self, **kwargs):
+		super(DatabaseManagementDatabaseLinkView, self).__init__(**kwargs)
+		self.add_widget(self.generalLayout)
+		self.generalLayout.databaseLabel = Label(text = "Database:  ", size_hint_x = 0.1)
+		self.generalLayout.add_widget(self.generalLayout.databaseLabel)
+		self.generalLayout.databaseText = TextInput(size_hint_x = 0.7, multiline = False)
+		self.generalLayout.databaseText.bind(on_text_validate = self.linkDatabase)
+		self.generalLayout.add_widget(self.generalLayout.databaseText)
+		self.generalLayout.databaseSubmit = Button(text = "Submit", size_hint_x = 0.2)
+		self.generalLayout.databaseSubmit.bind(on_press = self.linkDatabase)
+		self.generalLayout.add_widget(self.generalLayout.databaseSubmit)
+	
+	def linkDatabase(self, instance): 
+		datacenter.link = self.generalLayout.databaseText.text
+		print(datacenter.link)
+		self.generalLayout.databaseText.text = ""
 		
+class CalendarDatabaseLinkView(BoxLayout):
+	generalLayout = BoxLayout()
+	
+	def __init__(self, **kwargs):
+		super(CalendarDatabaseLinkView, self).__init__(**kwargs)
+		self.add_widget(self.generalLayout)
+		self.generalLayout.databaseLabel = Label(text = "Database:  ", size_hint_x = 0.1)
+		self.generalLayout.add_widget(self.generalLayout.databaseLabel)
+		self.generalLayout.databaseText = TextInput(size_hint_x = 0.7, multiline = False)
+		self.generalLayout.databaseText.bind(on_text_validate = self.linkDatabase)
+		self.generalLayout.add_widget(self.generalLayout.databaseText)
+		self.generalLayout.databaseSubmit = Button(text = "Submit", size_hint_x = 0.2)
+		self.generalLayout.databaseSubmit.bind(on_press = self.linkDatabase)
+		self.generalLayout.add_widget(self.generalLayout.databaseSubmit)
+	
+	def linkDatabase(self, instance): 
+		datacenter.link = self.generalLayout.databaseText.text
+		print(datacenter.link)
+		self.generalLayout.databaseText.text = ""
+	
 	
 	
 #General view classes of the GUI
@@ -531,50 +509,17 @@ class ScreenMainMenu(Screen):
 class ScreenDatabase(Screen):
 	spreadsheetLink = ObjectProperty()
 
+#(Controller for Calendar)
 class ScreenCalendar(Screen):
 	spreadsheetLink = ObjectProperty()
-	
-# class ScreenCalendar(Screen):
-	# spreadsheetLink = ObjectProperty()
-	# mainScreen = RelativeLayout()
-	# topSpacing = RelativeLayout(size_hint_y = 0.02, pos_hint = {"center_x": 0.5, "top": 1})
-	# mainScreen.add_widget(topSpacing)
-	# titleBar = RelativeLayout(size_hint_y = 0.18, pos_hint = {"center_x": 0.5, "top": 0.98})
-	# mainScreen.add_widget(titleBar)
-	
-	# titleLabel = Label(text="Calendar", halign = "center", valign = "center")
-	# titleBar.add_widget(titleLabel)
-	# backButton = Button(text="Back", size_hint_x = 0.25, size_hint_y = 0.25, pos_hint = {"right": 0.99, "top": 1})
-	# titleBar.add_widget(backButton)
-	# spreadsheetBar = BoxLayout(size_hint_x = 0.8, size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "bottom": 0})
-	# titleBar.add_widget(spreadsheetBar)
-	
-	# spreadsheetLinkLabel = Label(text="Database:  ", size_hint_x = 0.1)
-	# spreadsheetBar.add_widget(spreadsheetLinkLabel)
-	# spreadsheetTextInput = TextInput(size_hint_x = 0.7)
-	# spreadsheetBar.add_widget(spreadsheetTextInput)
-	# spreadsheetSubmit = Button(text="Submit", size_hint_x = 0.2)
-	# spreadsheetBar.add_widget(spreadsheetSubmit)
-	
-	# widgetViews = RelativeLayout(size_hint_y = 0.8, pos_hint = {"center_x": 0.5, "bottom": 0})
-	# mainScreen.add_widget(widgetViews)
-	# monthSelector = MonthSelector()
-	# widgetViews.add_widget(monthSelector)
-	# dateManager = CalendarView()
-	# widgetViews.add_widget(dateManager)
-	# dayInfo = Button(text = "Day Info", size_hint_x = 0.3, size_hint_y = 0.5, pos_hint = {"left": 0, "bottom": 0})
-	# widgetViews.add_widget(dayInfo)
-	# mapView = MapView()
-	# widgetViews.add_widget(mapView)
-	
-	# mainScreen.remove_widget(widgetViews)
 
-
+	
+	
 screenManager = ScreenManager()
 
-screenManager.add_widget(ScreenMainMenu(name="screen_mainmenu"))
-screenManager.add_widget(ScreenDatabase(name="screen_database"))
-screenManager.add_widget(ScreenCalendar(name="screen_calendar"))
+screenManager.add_widget(ScreenMainMenu(name = "screen_mainmenu"))
+screenManager.add_widget(ScreenDatabase(name = "screen_database"))
+screenManager.add_widget(ScreenCalendar(name = "screen_calendar"))
 
 	
 class WavesInMotion(App):
