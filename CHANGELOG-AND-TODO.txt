@@ -128,3 +128,4 @@ CHANGELOG:
   -Added functionality to pass link to Google Sheets to datacenter object via database link management view in GUI
 	>It's finally time to add the ability to link to Google via the submit buttons!
   -Cleaned up code and removed deprecated commented functions and classes in main.py
+  -Added the need for a link to be initialized with datacenter object
