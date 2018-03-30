@@ -100,7 +100,7 @@ Builder.load_string("""
 			Label:
 				halign: "center"
 				valign: "center"
-				text: "Calendar"
+				text: "Database Manager"
 			Button:
 				size_hint_x: None
 				size_hint_y: None
