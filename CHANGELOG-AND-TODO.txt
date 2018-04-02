@@ -132,3 +132,9 @@ CHANGELOG:
 	>It's finally time to add the ability to link to Google via the submit buttons!
   -Cleaned up code and removed deprecated commented functions and classes in main.py
   -Added the need for a link to be initialized with datacenter object
+
+4/2/2018
+  -Credentials can officially be obtained from google via submitting a database link
+	>Provides the ability to read and write specifically to and from spreadsheets
+  -Created written data structure for Google Sheets 
+	>This could still use some tinkering
