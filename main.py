@@ -316,6 +316,7 @@ class Calendar():
 today = datetime.date.today()
 calendar = Calendar(today)
 datacenter = datacenter.Datacenter("DummyLink")
+credentials = None
 		
 #Provide an overall view for the Calendar for managing data provided from the Calendar object (View)
 class CalendarViewer(RelativeLayout):
@@ -477,6 +478,8 @@ class DatabaseManagementDatabaseLinkView(BoxLayout):
 	
 	def linkDatabase(self, instance): 
 		datacenter.link = self.generalLayout.databaseText.text
+		credentials = datacenter.getCredentials()
+		datacenter.databaseConnect(credentials)
 		print(datacenter.link)
 		self.generalLayout.databaseText.text = ""
 		
@@ -497,6 +500,8 @@ class CalendarDatabaseLinkView(BoxLayout):
 	
 	def linkDatabase(self, instance): 
 		datacenter.link = self.generalLayout.databaseText.text
+		credentials = datacenter.getCredentials()
+		datacenter.databaseConnect(credentials)
 		print(datacenter.link)
 		self.generalLayout.databaseText.text = ""
 	
