@@ -10,13 +10,32 @@
 #
 #The datacenter class will be instantiated with all current data from Google, and all subsequent objects of
 #associated classes will be managed from there.
-
+from __future__ import print_function
 from datacls import state
 from datacls import city
 from datacls import venue
 from datacls import dayinfo
 from datacls import contact
 from datacls import band
+
+import httplib2
+import os
+
+from apiclient import discovery
+from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
+
+try:
+    import argparse
+    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+except ImportError:
+    flags = None
+
+# Create the scopes for Waves In Motion database
+SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'Waves In Motion'
 
 class Datacenter: 
 	
@@ -30,6 +49,7 @@ class Datacenter:
 	#possible branch - days, which has one or more associated states/cities (otherwise considered travel days)
 	def __init__(self, link, states=None, contacts=None, bands=None):
 		self.link = link
+		self.service = None
 		
 		if states is None:
 			self.states = []
@@ -45,8 +65,49 @@ class Datacenter:
 			self.bands = []
 		else:
 			self.bands = bands
+			
+	#Function to obtain user's google OAuth2.0 credentials from client_secret.json
+	def getCredentials(self):
+		"""Gets valid user credentials from storage.
+
+		If nothing has been stored, or if the stored credentials are invalid,
+		the OAuth2 flow is completed to obtain the new credentials.
+
+		Returns:
+			Credentials, the obtained credential.
+		"""
+		self.home_dir = os.path.expanduser('~')
+		self.credential_dir = os.path.join(self.home_dir, '.credentials')
+		if not os.path.exists(self.credential_dir):
+			os.makedirs(self.credential_dir)
+		self.credential_path = os.path.join(self.credential_dir,
+									   'sheets.googleapis.com-waves-in-motion.json')
+
+		store = Storage(self.credential_path)
+		self.credentials = store.get()
+		if not self.credentials or self.credentials.invalid:
+			flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+			flow.user_agent = APPLICATION_NAME
+			if flags:
+				self.credentials = tools.run_flow(flow, store, flags)
+			else: # Needed only for compatibility with Python 2.6
+				self.credentials = tools.run(flow, store)
+			print('Storing credentials to ' + self.credential_path)
+		return self.credentials
 	
 	
+	
+	#Connect to the database from the given link
+	def databaseConnect(self, credentials):
+		self.credentials = credentials
+		self.http = self.credentials.authorize(httplib2.Http())
+		self.discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
+						'version=v4')
+		self.service = discovery.build('sheets', 'v4', http=self.http,
+								  discoveryServiceUrl=self.discoveryUrl)
+		
+								  
+		
 	#The following 3 functions are self-explanatory by title - add, remove, and print states
 	def addState(self, state):
 		if state not in self.states:
