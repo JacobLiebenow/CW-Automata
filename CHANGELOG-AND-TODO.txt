@@ -138,3 +138,9 @@ CHANGELOG:
 	>Provides the ability to read and write specifically to and from spreadsheets
   -Created written data structure for Google Sheets 
 	>This could still use some tinkering
+
+4/3/2018  (UPDATED TO InFDev 0.0.5)
+  -Link to spreadsheet is now put through a validation process, and the ID is parsed
+  -Redesigned Database Manager page (drawn by hand)
+  -Added view for overall Database Manager page structure (python)
+  -Added coded wireframe of Database Manager within view
