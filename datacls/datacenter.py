@@ -49,6 +49,7 @@ class Datacenter:
 	#possible branch - days, which has one or more associated states/cities (otherwise considered travel days)
 	def __init__(self, link, states=None, contacts=None, bands=None):
 		self.link = link
+		self.spreadsheetID = "Dummy ID"
 		self.service = None
 		
 		if states is None:
