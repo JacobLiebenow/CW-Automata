@@ -1,6 +1,6 @@
 #Written by: Jacob S Liebenow
-#Version: 0.0.4
-#Stage: InDev/Pre-alpha
+#Version: 0.0.5
+#Stage: InFDev/Pre-alpha
 #
 #
 #
@@ -26,6 +26,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
 from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
+from kivy.uix.popup import Popup
 
 #Import MapView
 from kivy.garden.mapview import MapView
@@ -116,6 +117,9 @@ Builder.load_string("""
 				size_hint_y: 0.3
 				size_hint_x: 0.8
 				pos_hint: {"center_x": 0.5, "bottom": 0}
+		DatabaseViewer:
+			size_hint_x: 1
+			size_hint_y: 0.8
 		
 
 		
@@ -460,6 +464,69 @@ class CalendarViewer(RelativeLayout):
 			self.dateInfoViewer.placeholderLabel.text = (str(monthSelected)+"/"+instance.text+"/"+str(yearSelected))
 			self.dateSelected = datetime.date(yearSelected, monthSelected, int(instance.text))
 
+#Provide an overall view for the Database Manager screen
+class DatabaseViewer(RelativeLayout):
+	stateCitySorterLayout = RelativeLayout(size_hint = (0.3,0.12), pos_hint = {"center_x": 0.5, "top": 0.985})
+	venueSelectorLayout = RelativeLayout(size_hint = (0.2, 0.12), pos_hint = {"center_x": 0.15, "top": 0.85})
+	venueAlterationLayout = RelativeLayout(size_hint = (0.25, 1), pos_hint = {"right": 1, "center_y": 0.5})
+	contactSelectorLayout = RelativeLayout(size_hint = (0.4, 0.12), pos_hint = {"center_x": 0.75, "top": 0.85})
+	contactTypeLayout = RelativeLayout(size_hint = (0.5, 1), pos_hint = {"left": 0, "center_y": 0.5})
+	contactAlterationLayout = RelativeLayout(size_hint = (0.125, 1), pos_hint = {"right": 1, "center_y": 0.5})
+	infoBoxLayout = RelativeLayout(size_hint = (0.9,0.6), pos_hint = {"center_x": 0.5, "bottom": 0.02})
+	locationInfoLayout = RelativeLayout(size_hint = (0.5, 1), pos_hint = {"left": 0, "center_y": 0.5})
+	contactInfoLayout = RelativeLayout(size_hint = (0.5, 1), pos_hint = {"right": 1, "center_y": 0.5})
+	
+	def __init__(self, **kwargs):
+		self.pos_hint = {"center_x": 0.5, "bottom": 0}
+		super(DatabaseViewer, self).__init__(**kwargs)
+		
+		#Add embedded layout design
+		self.add_widget(self.stateCitySorterLayout)
+		self.add_widget(self.venueSelectorLayout)
+		self.add_widget(self.contactSelectorLayout)
+		self.add_widget(self.infoBoxLayout)
+		
+		#Add venue selection layouts
+		self.venueSelectorLayout.add_widget(self.venueAlterationLayout)
+		
+		#Add contact selection layouts
+		self.contactSelectorLayout.add_widget(self.contactTypeLayout)
+		self.contactSelectorLayout.add_widget(self.contactAlterationLayout)
+		
+		#Add info box layouts
+		self.infoBoxLayout.add_widget(self.locationInfoLayout)
+		self.infoBoxLayout.add_widget(self.contactInfoLayout)
+		
+		#Manage widgets within the state and city selector
+		self.stateCitySorterLayout.add_widget(Button(text = "State", size_hint_x = 0.5, pos_hint = {"left": 0, "center_y": 0.5}))
+		self.stateCitySorterLayout.add_widget(Button(text = "City", size_hint_x = 0.5, pos_hint = {"right": 1, "center_y": 0.5}))
+		
+		#Manage widgets within the venue selector layout
+		self.venueSelectorLayout.add_widget(Button(text = "Venue", size_hint_x = 0.75, pos_hint = {"left": 0, "center_y": 0.5}))
+		
+		#Manage widgets within the venue selector's venue alteration layout
+		self.venueAlterationLayout.add_widget(Button(text = "New", size_hint_y = 0.33, pos_hint = {"center_x": 0.5, "top": 1}))
+		self.venueAlterationLayout.add_widget(Button(text = "Edit", size_hint_y = 0.33, pos_hint = {"center_x": 0.5, "center_y": 0.5}))
+		self.venueAlterationLayout.add_widget(Button(text = "Rem", size_hint_y = 0.33, pos_hint = {"center_x": 0.5, "bottom": 0}))
+		
+		#Manage widgets within the contact selector layout
+		self.contactSelectorLayout.add_widget(Button(text = "Contact", size_hint_x = 0.375, pos_hint = {"center_x": 0.6875, "center_y": 0.5}))
+		
+		#Manage widgets within the contact selector's contact type layout
+		self.contactTypeLayout.add_widget(Label(text = "Individual", size_hint_y = 0.5, pos_hint = {"center_x": 0.5, "top": 1}))
+		self.contactTypeLayout.add_widget(Label(text = "Organization", size_hint_y = 0.5, pos_hint = {"center_x": 0.5, "bottom": 0}))
+		
+		#Manage widgets within the contact selector's contact alteration layout
+		self.contactAlterationLayout.add_widget(Button(text = "New", size_hint_y = 0.33, pos_hint = {"center_x": 0.5, "top": 1}))
+		self.contactAlterationLayout.add_widget(Button(text = "Edit", size_hint_y = 0.33, pos_hint = {"center_x": 0.5, "center_y": 0.5}))
+		self.contactAlterationLayout.add_widget(Button(text = "Rem", size_hint_y = 0.33, pos_hint = {"center_x": 0.5, "bottom": 0}))
+		
+		#Manage widgets within the info box's location info layout
+		self.locationInfoLayout.add_widget(Button(text = "Location Information", pos_hint = {"center_x": 0.5, "center_y": 0.5}))
+		
+		#Manage widgets within the info box's contact info layout
+		self.contactInfoLayout.add_widget(Button(text = "Contact Information", pos_hint = {"center_x": 0.5, "center_y": 0.5}))
+	
 #Handle the Google Sheets database link management (two made - one for the database management page, one for the calendar page)
 class DatabaseManagementDatabaseLinkView(BoxLayout):
 	generalLayout = BoxLayout()
@@ -480,7 +547,18 @@ class DatabaseManagementDatabaseLinkView(BoxLayout):
 		datacenter.link = self.generalLayout.databaseText.text
 		credentials = datacenter.getCredentials()
 		datacenter.databaseConnect(credentials)
-		print(datacenter.link)
+		linkSegments = datacenter.link.split("/")
+		
+		#Make sure the link provided won't cause an error, and if it will, prevent it from passing through
+		if len(linkSegments) >= 6:
+			if linkSegments[2] == "docs.google.com" and linkSegments[3] == "spreadsheets":
+				datacenter.spreadsheetID = linkSegments[5]
+			else:
+				popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
+				popup.open()
+		else:
+			popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
+			popup.open()
 		self.generalLayout.databaseText.text = ""
 		
 class CalendarDatabaseLinkView(BoxLayout):
@@ -502,7 +580,18 @@ class CalendarDatabaseLinkView(BoxLayout):
 		datacenter.link = self.generalLayout.databaseText.text
 		credentials = datacenter.getCredentials()
 		datacenter.databaseConnect(credentials)
-		print(datacenter.link)
+		linkSegments = datacenter.link.split("/")
+		
+		#Make sure the link provided won't cause an error, and if it will, prevent it from passing through
+		if len(linkSegments) >= 6:
+			if linkSegments[2] == "docs.google.com" and linkSegments[3] == "spreadsheets":
+				datacenter.spreadsheetID = linkSegments[5]
+			else:
+				popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
+				popup.open()
+		else:
+			popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
+			popup.open()
 		self.generalLayout.databaseText.text = ""
 	
 	
