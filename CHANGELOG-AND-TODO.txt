@@ -144,3 +144,8 @@ CHANGELOG:
   -Redesigned Database Manager page (drawn by hand)
   -Added view for overall Database Manager page structure (python)
   -Added coded wireframe of Database Manager within view
+
+4/4/2018
+  -Added final UI widget choices to Database Manager page (spinners, radio buttons, etc.)
+  -Created popups to add info to google sheets
+  -Added error catching for Database Manager page
