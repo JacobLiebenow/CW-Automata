@@ -51,6 +51,7 @@ class Datacenter:
 		self.link = link
 		self.spreadsheetID = "Dummy ID"
 		self.service = None
+		self.linkValid = False
 		
 		if states is None:
 			self.states = []
@@ -107,8 +108,217 @@ class Datacenter:
 		self.service = discovery.build('sheets', 'v4', http=self.http,
 								  discoveryServiceUrl=self.discoveryUrl)
 		
-								  
+		#Set up the database, if necessary
+		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
+		self.sheets = self.sheetMetadata.get("sheets", "")
+		self.title = self.sheets[0].get("properties", {}).get("title", "someTitle")
+		print(self.sheetMetadata)
+		print("************")
+		print("************")
+		print("************")
+		print(self.title) 
 		
+		#Initialize the sheet setup from a fresh spreadsheet
+		if self.title == "Sheet1" and len(self.sheets) == 1:
+			self.sheetId = self.sheets[0].get("properties", {}).get("sheetId", 1000006)
+			print(self.sheetId)
+			requests = []
+			requests.append({
+				"addSheet": {
+					"properties": {
+						"title": "Venues"
+					}
+				}
+			})
+			requests.append({
+				"addSheet": {
+					"properties": {
+						"title": "Individual Contacts"
+					}
+				}
+			})
+			requests.append({
+				"addSheet": {
+					"properties": {
+						"title": "Organizational Contacts"
+					}
+				}
+			})
+			requests.append({
+				"deleteSheet": {
+					"sheetId":self.sheetId
+				}
+			})
+			
+			body = {
+				"requests": requests
+			}
+			response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+		#Clean up the spreadsheet if a spreadsheet was already made
+		elif self.title == "Sheet1" and len(self.sheets) > 1:
+			self.sheetId = self.sheets[0].get("properties", {}).get("sheetId", 1000006)
+			print(self.sheetId)
+			requests = []
+			requests.append({
+				"deleteSheet": {
+					"sheetId":self.sheetId
+				}
+			})
+			
+			body = {
+				"requests": requests
+			}
+			response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+			
+	
+	def submitVenueDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes):
+		print("****************")
+		print(submittedState)
+		print(submittedCity)
+		print(submittedName)
+		print(submittedAddress)
+		print(submittedZip)
+		print(submittedPhone)
+		print(submittedLinks)
+		print(submittedContacts)
+		print(submittedNotes)
+		print("****************")
+		
+		#Submit all relevant data to the google sheet
+		rangeName = "Venues!A1:I1"
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes]]
+		request = ({
+			"majorDimension": "ROWS",
+			"values": values
+		})
+		response = self.service.spreadsheets().values().append(spreadsheetId = self.spreadsheetId, range = rangeName, body = request, valueInputOption = "RAW").execute()
+		
+		#Resize the data after the entries
+		requests = []
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 9
+				}
+			}
+		})
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS"
+				}
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+	def submitIndividualDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes):
+		print("****************")
+		print(submittedState)
+		print(submittedCity)
+		print(submittedName)
+		print(submittedAddress)
+		print(submittedZip)
+		print(submittedPhone)
+		print(submittedLinks)
+		print(submittedContacts)
+		print(submittedNotes)
+		print("****************")
+		
+		#Submit all relevant data to the google sheet
+		rangeName = "Individual Contacts!A1:I1"
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes]]
+		request = ({
+			"majorDimension": "ROWS",
+			"values": values
+		})
+		response = self.service.spreadsheets().values().append(spreadsheetId = self.spreadsheetId, range = rangeName, body = request, valueInputOption = "RAW").execute()
+		
+		#Resize the data after the entries
+		requests = []
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 9
+				}
+			}
+		})
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS"
+				}
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+	def submitOrganizationDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes):
+		print("****************")
+		print(submittedState)
+		print(submittedCity)
+		print(submittedName)
+		print(submittedAddress)
+		print(submittedZip)
+		print(submittedPhone)
+		print(submittedLinks)
+		print(submittedContacts)
+		print(submittedNotes)
+		print("****************")
+		
+		#Submit all relevant data to the google sheet
+		rangeName = "Organizational Contacts!A1:I1"
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes]]
+		request = ({
+			"majorDimension": "ROWS",
+			"values": values
+		})
+		response = self.service.spreadsheets().values().append(spreadsheetId = self.spreadsheetId, range = rangeName, body = request, valueInputOption = "RAW").execute()
+		
+		#Resize the data after the entries
+		requests = []
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 9
+				}
+			}
+		})
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS"
+				}
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+			
 	#The following 3 functions are self-explanatory by title - add, remove, and print states
 	def addState(self, state):
 		if state not in self.states:
