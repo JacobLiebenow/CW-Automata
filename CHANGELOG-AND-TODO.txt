@@ -149,3 +149,10 @@ CHANGELOG:
   -Added final UI widget choices to Database Manager page (spinners, radio buttons, etc.)
   -Created popups to add info to google sheets
   -Added error catching for Database Manager page
+
+4/5/2018 (UPDATED TO InFDev 0.0.6)
+  -Added batch submission info and HTTP requests for adding data to Google Sheets
+	>New Venue/Individual/Organization buttons fully operational
+  -Reorganized layout for data entry popups
+  -Heavily editted datacenter.py to allow for new batch requests
+  -Added more error catching to datacenter.py and main.py
