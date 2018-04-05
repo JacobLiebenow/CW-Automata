@@ -1,5 +1,5 @@
 #Written by: Jacob S Liebenow
-#Version: 0.0.5
+#Version: 0.0.6
 #Stage: InFDev/Pre-alpha
 #
 #
@@ -573,7 +573,7 @@ class DatabaseViewer(RelativeLayout):
 		
 		#Create new lines for input...
 		#...State and city...
-		stateCityLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 1})
+		stateCityLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.9})
 		stateLabel = Label(text = "State:", size_hint_x = 0.1)
 		self.stateInput = TextInput(size_hint_x = 0.4)
 		cityLabel = Label(text = "City:", size_hint_x = 0.1)
@@ -585,7 +585,7 @@ class DatabaseViewer(RelativeLayout):
 		newVenuePopupLayout.add_widget(stateCityLayout)
 		
 		#...Name...
-		nameLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.9})
+		nameLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 1})
 		nameLabel = Label(text = "Name:", size_hint_x = 0.1)
 		self.nameInput = TextInput(size_hint_x = 0.9)
 		nameLayout.add_widget(nameLabel)
@@ -595,9 +595,13 @@ class DatabaseViewer(RelativeLayout):
 		#...Address...
 		addressLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.8})
 		addressLabel = Label(text = "Address:", size_hint_x = 0.1)
-		self.addressInput = TextInput(size_hint_x = 0.9)
+		self.addressInput = TextInput(size_hint_x = 0.6)
+		zipLabel = Label(text = "Zip Code:", size_hint_x = 0.1)
+		self.zipInput = TextInput(size_hint_x = 0.2)
 		addressLayout.add_widget(addressLabel)
 		addressLayout.add_widget(self.addressInput)
+		addressLayout.add_widget(zipLabel)
+		addressLayout.add_widget(self.zipInput)
 		newVenuePopupLayout.add_widget(addressLayout)
 		
 		#...Phone #...
@@ -658,7 +662,7 @@ class DatabaseViewer(RelativeLayout):
 			
 			#Create new lines for input...
 			#...State and city...
-			stateCityLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 1})
+			stateCityLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.9})
 			stateLabel = Label(text = "State:", size_hint_x = 0.1)
 			self.stateInput = TextInput(size_hint_x = 0.4)
 			cityLabel = Label(text = "City:", size_hint_x = 0.1)
@@ -670,7 +674,7 @@ class DatabaseViewer(RelativeLayout):
 			newContactPopupLayout.add_widget(stateCityLayout)
 			
 			#...Name...
-			nameLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.9})
+			nameLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 1})
 			nameLabel = Label(text = "Name:", size_hint_x = 0.1)
 			self.nameInput = TextInput(size_hint_x = 0.9)
 			nameLayout.add_widget(nameLabel)
@@ -680,9 +684,13 @@ class DatabaseViewer(RelativeLayout):
 			#...Address...
 			addressLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.8})
 			addressLabel = Label(text = "Address:", size_hint_x = 0.1)
-			self.addressInput = TextInput(size_hint_x = 0.9)
+			self.addressInput = TextInput(size_hint_x = 0.6)
+			zipLabel = Label(text = "Zip Code:", size_hint_x = 0.1)
+			self.zipInput = TextInput(size_hint_x = 0.2)
 			addressLayout.add_widget(addressLabel)
 			addressLayout.add_widget(self.addressInput)
+			addressLayout.add_widget(zipLabel)
+			addressLayout.add_widget(self.zipInput)
 			newContactPopupLayout.add_widget(addressLayout)
 			
 			#...Phone #...
@@ -736,7 +744,7 @@ class DatabaseViewer(RelativeLayout):
 			
 			#Create new lines for input...
 			#...State and city...
-			stateCityLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 1})
+			stateCityLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.9})
 			stateLabel = Label(text = "State:", size_hint_x = 0.1)
 			self.stateInput = TextInput(size_hint_x = 0.4)
 			cityLabel = Label(text = "City:", size_hint_x = 0.1)
@@ -748,7 +756,7 @@ class DatabaseViewer(RelativeLayout):
 			newContactPopupLayout.add_widget(stateCityLayout)
 			
 			#...Name...
-			nameLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.9})
+			nameLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 1})
 			nameLabel = Label(text = "Name:", size_hint_x = 0.1)
 			self.nameInput = TextInput(size_hint_x = 0.9)
 			nameLayout.add_widget(nameLabel)
@@ -758,17 +766,21 @@ class DatabaseViewer(RelativeLayout):
 			#...Address...
 			addressLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.8})
 			addressLabel = Label(text = "Address:", size_hint_x = 0.1)
-			self.addressInput = TextInput(size_hint_x = 0.9)
+			self.addressInput = TextInput(size_hint_x = 0.6)
+			zipLabel = Label(text = "Zip Code:", size_hint_x = 0.1)
+			self.zipInput = TextInput(size_hint_x = 0.2)
 			addressLayout.add_widget(addressLabel)
 			addressLayout.add_widget(self.addressInput)
+			addressLayout.add_widget(zipLabel)
+			addressLayout.add_widget(self.zipInput)
 			newContactPopupLayout.add_widget(addressLayout)
 			
 			#...Phone #...
 			phoneLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.7})
 			phoneLabel = Label(text = "Phone #:", size_hint_x = 0.1)
-			phoneInput = TextInput(size_hint_x = 0.9)
+			self.phoneInput = TextInput(size_hint_x = 0.9)
 			phoneLayout.add_widget(phoneLabel)
-			phoneLayout.add_widget(phoneInput)
+			phoneLayout.add_widget(self.phoneInput)
 			newContactPopupLayout.add_widget(phoneLayout)
 			
 			#...Links...
@@ -820,37 +832,70 @@ class DatabaseViewer(RelativeLayout):
 	
 	#Handle cases for submission of data to sheets
 	def submitVenueData(self, instance):
-		print("New venue submitted.")
-		popupContent = RelativeLayout()
-		popupLabel = Label(text = "Venue submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
-		popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
-		popupContent.add_widget(popupLabel)
-		popupContent.add_widget(popupClose)
-		popup = Popup(title = "Submission Successful", content = popupContent, size_hint = (0.85, 0.4))
-		popup.open()
-		popupClose.bind(on_press = popup.dismiss)
+		if datacenter.linkValid is True:
+			print("New venue submitted.")
+			datacenter.submitVenueDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.notesInput.text)
+			popupContent = RelativeLayout()
+			popupLabel = Label(text = "Venue submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+			popupContent.add_widget(popupLabel)
+			popupContent.add_widget(popupClose)
+			popup = Popup(title = "Submission Successful", content = popupContent, size_hint = (0.85, 0.4))
+			popup.open()
+			popupClose.bind(on_press = popup.dismiss)
+		else:
+			popupContent = RelativeLayout()
+			popupLabel = Label(text = "Link to database was not initialized.  Please submit link.", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+			popupContent.add_widget(popupLabel)
+			popupContent.add_widget(popupClose)
+			popup = Popup(title = "Submission Failed", content = popupContent, size_hint = (0.85, 0.4))
+			popup.open()
+			popupClose.bind(on_press = popup.dismiss)
 	
 	def submitIndividualData(self, instance):
-		print("New individual submitted.")
-		popupContent = RelativeLayout()
-		popupLabel = Label(text = "Contact submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
-		popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
-		popupContent.add_widget(popupLabel)
-		popupContent.add_widget(popupClose)
-		popup = Popup(title = "Submission Successful", content = popupContent, size_hint = (0.85, 0.4))
-		popup.open()
-		popupClose.bind(on_press = popup.dismiss)
+		if datacenter.linkValid is True:
+			print("New individual submitted.")
+			datacenter.submitIndividualDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.notesInput.text)
+			popupContent = RelativeLayout()
+			popupLabel = Label(text = "Contact submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+			popupContent.add_widget(popupLabel)
+			popupContent.add_widget(popupClose)
+			popup = Popup(title = "Submission Successful", content = popupContent, size_hint = (0.85, 0.4))
+			popup.open()
+			popupClose.bind(on_press = popup.dismiss)
+		else:
+			popupContent = RelativeLayout()
+			popupLabel = Label(text = "Link to database was not initialized.  Please submit link.", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+			popupContent.add_widget(popupLabel)
+			popupContent.add_widget(popupClose)
+			popup = Popup(title = "Submission Failed", content = popupContent, size_hint = (0.85, 0.4))
+			popup.open()
+			popupClose.bind(on_press = popup.dismiss)
 	
 	def submitOrganizationData(self, instance):
-		print("New organization submitted.")
-		popupContent = RelativeLayout()
-		popupLabel = Label(text = "Contact submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
-		popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
-		popupContent.add_widget(popupLabel)
-		popupContent.add_widget(popupClose)
-		popup = Popup(title = "Submission Successful", content = popupContent, size_hint = (0.85, 0.4))
-		popup.open()
-		popupClose.bind(on_press = popup.dismiss)
+		if datacenter.linkValid is True:
+			print("New organization submitted.")
+			datacenter.submitOrganizationDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.notesInput.text)
+			popupContent = RelativeLayout()
+			popupLabel = Label(text = "Contact submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+			popupContent.add_widget(popupLabel)
+			popupContent.add_widget(popupClose)
+			popup = Popup(title = "Submission Successful", content = popupContent, size_hint = (0.85, 0.4))
+			popup.open()
+			popupClose.bind(on_press = popup.dismiss)
+		else:
+			popupContent = RelativeLayout()
+			popupLabel = Label(text = "Link to database was not initialized.  Please submit link.", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+			popupContent.add_widget(popupLabel)
+			popupContent.add_widget(popupClose)
+			popup = Popup(title = "Submission Failed", content = popupContent, size_hint = (0.85, 0.4))
+			popup.open()
+			popupClose.bind(on_press = popup.dismiss)
 		
 		
 		
@@ -875,19 +920,24 @@ class DatabaseManagementDatabaseLinkView(BoxLayout):
 	def linkDatabase(self, instance): 
 		datacenter.link = self.generalLayout.databaseText.text
 		credentials = datacenter.getCredentials()
-		datacenter.databaseConnect(credentials)
+		
 		linkSegments = datacenter.link.split("/")
 		
 		#Make sure the link provided won't cause an error, and if it will, prevent it from passing through
 		if len(linkSegments) >= 6:
 			if linkSegments[2] == "docs.google.com" and linkSegments[3] == "spreadsheets":
-				datacenter.spreadsheetID = linkSegments[5]
+				datacenter.spreadsheetId = linkSegments[5]
+				datacenter.linkValid = True
+				popup = Popup(title = "Link Established", content = (Label(text = "Link to Google Sheets successfully established!")), size_hint = (0.85, 0.4))
+				popup.open()
 			else:
 				popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
 				popup.open()
 		else:
 			popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
 			popup.open()
+			
+		datacenter.databaseConnect(credentials)	
 		self.generalLayout.databaseText.text = ""
 		
 		
@@ -910,19 +960,24 @@ class CalendarDatabaseLinkView(BoxLayout):
 	def linkDatabase(self, instance): 
 		datacenter.link = self.generalLayout.databaseText.text
 		credentials = datacenter.getCredentials()
-		datacenter.databaseConnect(credentials)
+		
 		linkSegments = datacenter.link.split("/")
 		
 		#Make sure the link provided won't cause an error, and if it will, prevent it from passing through
 		if len(linkSegments) >= 6:
 			if linkSegments[2] == "docs.google.com" and linkSegments[3] == "spreadsheets":
-				datacenter.spreadsheetID = linkSegments[5]
+				datacenter.spreadsheetId = linkSegments[5]
+				datacenter.linkValid = True
+				popup = Popup(title = "Link Established", content = (Label(text = "Link to Google Sheets successfully established!")), size_hint = (0.85, 0.4))
+				popup.open()
 			else:
 				popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
 				popup.open()
 		else:
 			popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
 			popup.open()
+			
+		datacenter.databaseConnect(credentials)	
 		self.generalLayout.databaseText.text = ""
 	
 	
