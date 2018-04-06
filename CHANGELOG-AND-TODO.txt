@@ -154,5 +154,12 @@ CHANGELOG:
   -Added batch submission info and HTTP requests for adding data to Google Sheets
 	>New Venue/Individual/Organization buttons fully operational
   -Reorganized layout for data entry popups
-  -Heavily editted datacenter.py to allow for new batch requests
+  -Heavily edited datacenter.py to allow for new batch requests
   -Added more error catching to datacenter.py and main.py
+
+4/6/2018
+  -Data can now be pulled from Google Sheets and read in addition to being written directly to sheets
+	>Info added to the database is now automatically sorted, as well, in alphabetial order
+  -Data is now populated within the datacenter on connection call
+  -Edited data storage classes to mesh with new data call protocols via Google Sheets
+	>Need to populate data on clicking one of the spinners to sort by state, city, venue, etc.
