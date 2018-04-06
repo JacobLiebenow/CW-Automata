@@ -507,7 +507,7 @@ class DatabaseViewer(RelativeLayout):
 		self.infoBoxLayout.add_widget(self.locationInfoLayout)
 		self.infoBoxLayout.add_widget(self.contactInfoLayout)
 		
-		#Manage widgets within the state and city selector
+		#Manage widgets within the state and city selector - ON PRESS FOR STATE, REFRESH DATA WITHIN DATABASE IF DATA UNINITIALIZED AND LINK VALIDATED
 		self.stateSpinner = Spinner(text = "State", size_hint_x = 0.5, pos_hint = {"left": 0, "center_y": 0.5})
 		self.citySpinner = Spinner(text = "City", size_hint_x = 0.5, pos_hint = {"right": 1, "center_y": 0.5})
 		self.stateCitySorterLayout.add_widget(self.stateSpinner)
