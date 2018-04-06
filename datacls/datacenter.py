@@ -47,7 +47,7 @@ class Datacenter:
 	#bands, bookers, promoters, and whoever else might be considered relevant.  Contacts might normally be
 	#organized by city, but I'd like overall contact searching functionality irrespective of location.  Another
 	#possible branch - days, which has one or more associated states/cities (otherwise considered travel days)
-	def __init__(self, link, states=None, contacts=None, bands=None):
+	def __init__(self, link, states = None, stateNames = None, individuals = None, individualNames = None, organizations = None, organizationNames = None):
 		self.link = link
 		self.spreadsheetID = "Dummy ID"
 		self.service = None
@@ -58,15 +58,28 @@ class Datacenter:
 		else: 
 			self.states = states
 		
-		if contacts is None:
-			self.contacts = []
+		if stateNames is None:
+			self.stateNames = []
 		else:
-			self.contacts = contacts
+			self.stateNames = stateNames
+		
+		if individuals is None:
+			self.individuals = []
+		else:
+			self.individuals = individuals
 			
-		if bands is None:
-			self.bands = []
+		if individualNames is None:
+			self.individualNames = []
+			
+		if organizations is None:
+			self.organizations = []
 		else:
-			self.bands = bands
+			self.organizations = organizations
+			
+		if organizationNames is None:
+			self.organizationNames = []
+		else:
+			self.organizationNames = organizationNames
 			
 	#Function to obtain user's google OAuth2.0 credentials from client_secret.json
 	def getCredentials(self):
@@ -112,11 +125,7 @@ class Datacenter:
 		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
 		self.sheets = self.sheetMetadata.get("sheets", "")
 		self.title = self.sheets[0].get("properties", {}).get("title", "someTitle")
-		print(self.sheetMetadata)
-		print("************")
-		print("************")
-		print("************")
-		print(self.title) 
+		population = self.populate()
 		
 		#Initialize the sheet setup from a fresh spreadsheet
 		if self.title == "Sheet1" and len(self.sheets) == 1:
@@ -214,6 +223,51 @@ class Datacenter:
 				}
 			}
 		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 0,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 2,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 1,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
 		
 		body = {
 			"requests": requests
@@ -263,6 +317,51 @@ class Datacenter:
 				}
 			}
 		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 0,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 2,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 1,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
 		
 		body = {
 			"requests": requests
@@ -292,7 +391,7 @@ class Datacenter:
 		})
 		response = self.service.spreadsheets().values().append(spreadsheetId = self.spreadsheetId, range = rangeName, body = request, valueInputOption = "RAW").execute()
 		
-		#Resize the data after the entries
+		#Resize the data after the entries, and sort it according to name of individual, followed by name of city, followed by name of state
 		requests = []
 		requests.append({
 			"autoResizeDimensions": {
@@ -312,6 +411,51 @@ class Datacenter:
 				}
 			}
 		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 0,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 2,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 9
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 1,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
 		
 		body = {
 			"requests": requests
@@ -319,6 +463,62 @@ class Datacenter:
 		
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
 			
+	
+	#Populate the database's objects 
+	def populate(self):
+		self.states = []
+		self.stateNames = []
+		rangeName = "Venues!A1:I"
+		self.venueGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
+		print(self.venueGrouping)
+		self.values = self.venueGrouping.get('values', [])
+		print(self.values)
+		if not self.values:
+			print("No values found, spreadsheet empty")
+		else:
+			for row in self.values:
+				print(row[1])
+				if row[1] not in self.stateNames:
+					newState = state.State(row[1])
+					newCity = city.City(row[2])
+					newVenue = venue.Venue(row[0])
+					newCity.addVenue(newVenue)
+					newCity.venueNames.append(row[0])
+					newState.addCity(newCity)
+					newState.cityNames.append(row[2])
+					self.states.append(newState)
+					self.stateNames.append(row[1])
+				else:
+					selectedState = self.selectState(row[1])
+					if row[2] not in selectedState.cityNames:
+						newCity = city.City(row[2])
+						newVenue = venue.Venue(row[0])
+						newCity.addVenue(newVenue)
+						newCity.venueNames.append(row[0])
+						selectedState.addCity(newCity)
+						selectedState.cityNames.append(row[2])
+					else:
+						selectedCity = selectedState.selectCity(row[2])
+						newVenue = venue.Venue(row[0])
+						selectedCity.addVenue(newVenue)
+						selectedCity.venueNames.append(row[0])
+						
+		print("*****")
+		print("*****")
+		print("*****")
+		for province in self.states:
+			print(province.stateName)
+			for locale in province.cities:
+				print("----->"+locale.cityName)
+				for shop in locale.venues:
+					print("---------->"+shop.venueName)
+					
+		#ADD FOR CONTACTS AS WELL
+		
+		return "Self"
+	
+	
+	
 	#The following 3 functions are self-explanatory by title - add, remove, and print states
 	def addState(self, state):
 		if state not in self.states:
@@ -351,53 +551,53 @@ class Datacenter:
 	
 	
 	#The datacenter should be the primary table for contact object management
-	def addContact(self, contact):
-		if contact not in self.contacts:
-			self.contacts.append(contact)
+	def addIndividual(self, individual):
+		if individual not in self.individuals:
+			self.individuals.append(individual)
 	
-	def removeContact(self, contact):
-		if contact in self.contacts:
-			self.contacts.remove(contact)
+	def removeIndividual(self, individual):
+		if individual in self.individuals:
+			self.individuals.remove(individual)
 			
-	def printContacts(self):
-		for contact in self.contacts:
-			print(contact.name)
+	def printIndividuals(self):
+		for individual in self.individuals:
+			print(individual.name)
 			
-	def selectContact(self, contactName):
-		contactFound = False
+	def selectIndividual(self, individualName):
+		individualFound = False
 		
-		for contact in self.contacts:
-			if contactName == contact.name:
-				contactFound = True
-				return contact
+		for individual in self.individuals:
+			if individualName == individual.name:
+				individualFound = True
+				return individual
 		
-		if contactFound == False:
-			print("No contact found by the name of '",contactName,"'")
+		if individualFound == False:
+			print("No contact found by the name of '",individualName,"'")
 			print("Check spelling and make sure contact was initialized")
 	
 	
 	
-	#The datacenter will manage band objects, as well
-	def addBand(self, band):
-		if band not in self.bands:
-			self.bands.append(band)
+	#The datacenter will manage organization objects, as well
+	def addOrganization(self, organization):
+		if organization not in self.organizations:
+			self.organizations.append(organization)
 			
-	def removeBand(self, band):
-		if band in self.band:
-			self.bands.remove(band)
+	def removeOrganization(self, organization):
+		if organization in self.organization:
+			self.organizations.remove(organization)
 			
-	def printBands(self):
-		for band in self.bands:
-			print(band.bandName)
+	def printOrganizations(self):
+		for organization in self.organizations:
+			print(organization.bandName)
 			
-	def selectBand(self, bandName):
-		bandFound = False
+	def selectOrganization(self, organizationName):
+		organizationFound = False
 		
-		for band in self.bands:
-			if bandName == band.bandName:
-				bandFound = True
-				return band
+		for organization in self.organizations:
+			if organizationName == organization.bandName:
+				organizationFound = True
+				return organization
 			
-		if bandFound == False:
-			print("No band found by the name of '",bandName,"'")
+		if organizationFound == False:
+			print("No organization found by the name of '",organizationName,"'")
 			print("Check spelling and make sure contact was initialized")
