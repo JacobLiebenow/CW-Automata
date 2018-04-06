@@ -12,12 +12,18 @@ class City:
 	venueNumber = 0
 
 	#Each city consists of its own name, venues, bands (to be added), and promoters/bookers (to be added)
-	def __init__(self, cityName, venues=None):
+	def __init__(self, cityName, venues = None, venueNames = None):
 		self.cityName = cityName
+		
 		if venues is None:
 			self.venues = []
 		else:
 			self.venues = venues
+		
+		if venueNames is None:
+			self.venueNames = []
+		else: 
+			self.venueNames = venueNames
 		
 	#The following 3 functions are self explanatory by title - add, remove, or print venues
 	def addVenue(self, venue):
