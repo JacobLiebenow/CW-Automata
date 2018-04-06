@@ -161,5 +161,7 @@ CHANGELOG:
   -Data can now be pulled from Google Sheets and read in addition to being written directly to sheets
 	>Info added to the database is now automatically sorted, as well, in alphabetial order
   -Data is now populated within the datacenter on connection call
+	>A list of state names within datacenter is now maintained in order to ease in the state selection function
+	>Likewise, a similar array was added to state.py as well as city.py
   -Edited data storage classes to mesh with new data call protocols via Google Sheets
 	>Need to populate data on clicking one of the spinners to sort by state, city, venue, etc.
