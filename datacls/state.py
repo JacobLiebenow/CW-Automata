@@ -11,12 +11,18 @@ class State:
 	cityNumber = 0
 	
 	#Each state contains cities, and within those cities are venues, bands, promoters/bookers, etc.
-	def __init__(self, stateName, cities=None):
+	def __init__(self, stateName, cities = None, cityNames = None):
 		self.stateName = stateName
+		
 		if cities is None:
 			self.cities = []
 		else: 
 			self.cities = cities
+		
+		if cityNames is None:
+			self.cityNames = []
+		else:
+			self.cityNames = cityNames
 	
 	#The following 3 functions serve the relative same function as in city.py - add, remove, or print cities
 	def addCity(self, city):
