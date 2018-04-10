@@ -28,8 +28,7 @@ from datacls import venue
 class Contact:
 	
 	
-	def __init__(self, database, name, address, phoneNumber, email, links=None, roles=None, bands=None):
-		self.datacenter = database
+	def __init__(self, name, address, phoneNumber, email, links=None, roles=None, bands=None):
 		self.name = name
 		self.address = address
 		self.phoneNumber = phoneNumber
