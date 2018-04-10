@@ -16,7 +16,7 @@ from datacls import city
 from datacls import venue
 from datacls import dayinfo
 from datacls import contact
-from datacls import band
+from datacls import organization
 
 import httplib2
 import os
@@ -130,7 +130,7 @@ class Datacenter:
 		#Initialize the sheet setup from a fresh spreadsheet
 		if self.title == "Sheet1" and len(self.sheets) == 1:
 			self.sheetId = self.sheets[0].get("properties", {}).get("sheetId", 1000006)
-			print(self.sheetId)
+			# print(self.sheetId)
 			requests = []
 			requests.append({
 				"addSheet": {
@@ -167,7 +167,7 @@ class Datacenter:
 		#Clean up the spreadsheet if a spreadsheet was already made
 		elif self.title == "Sheet1" and len(self.sheets) > 1:
 			self.sheetId = self.sheets[0].get("properties", {}).get("sheetId", 1000006)
-			print(self.sheetId)
+			# print(self.sheetId)
 			requests = []
 			requests.append({
 				"deleteSheet": {
@@ -181,7 +181,7 @@ class Datacenter:
 			response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
 			
 	
-	def submitVenueDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes):
+	def submitVenueDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
 		print("****************")
 		print(submittedState)
 		print(submittedCity)
@@ -191,12 +191,13 @@ class Datacenter:
 		print(submittedPhone)
 		print(submittedLinks)
 		print(submittedContacts)
+		print(submittedEmail)
 		print(submittedNotes)
 		print("****************")
 		
 		#Submit all relevant data to the google sheet
-		rangeName = "Venues!A1:I1"
-		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes]]
+		rangeName = "Venues!A1:J1"
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes]]
 		request = ({
 			"majorDimension": "ROWS",
 			"values": values
@@ -211,7 +212,7 @@ class Datacenter:
 					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
 					"dimension": "COLUMNS",
 					"startIndex": 0,
-					"endIndex": 9
+					"endIndex": 10
 				}
 			}
 		})
@@ -228,7 +229,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -243,7 +244,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -258,7 +259,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -274,8 +275,9 @@ class Datacenter:
 		}
 		
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
 		
-	def submitIndividualDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes):
+	def submitIndividualDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
 		print("****************")
 		print(submittedState)
 		print(submittedCity)
@@ -285,12 +287,13 @@ class Datacenter:
 		print(submittedPhone)
 		print(submittedLinks)
 		print(submittedContacts)
+		print(submittedEmail)
 		print(submittedNotes)
 		print("****************")
 		
 		#Submit all relevant data to the google sheet
-		rangeName = "Individual Contacts!A1:I1"
-		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes]]
+		rangeName = "Individual Contacts!A1:J1"
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedEmail, submittedNotes]]
 		request = ({
 			"majorDimension": "ROWS",
 			"values": values
@@ -305,7 +308,7 @@ class Datacenter:
 					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
 					"dimension": "COLUMNS",
 					"startIndex": 0,
-					"endIndex": 9
+					"endIndex": 10
 				}
 			}
 		})
@@ -322,7 +325,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -337,7 +340,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -352,7 +355,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -368,8 +371,9 @@ class Datacenter:
 		}
 		
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
 		
-	def submitOrganizationDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes):
+	def submitOrganizationDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
 		print("****************")
 		print(submittedState)
 		print(submittedCity)
@@ -379,12 +383,13 @@ class Datacenter:
 		print(submittedPhone)
 		print(submittedLinks)
 		print(submittedContacts)
+		print(submittedEmail)
 		print(submittedNotes)
 		print("****************")
 		
 		#Submit all relevant data to the google sheet
-		rangeName = "Organizational Contacts!A1:I1"
-		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts, submittedNotes]]
+		rangeName = "Organizational Contacts!A1:J1"
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes]]
 		request = ({
 			"majorDimension": "ROWS",
 			"values": values
@@ -399,7 +404,7 @@ class Datacenter:
 					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
 					"dimension": "COLUMNS",
 					"startIndex": 0,
-					"endIndex": 9
+					"endIndex": 10
 				}
 			}
 		})
@@ -416,7 +421,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -431,7 +436,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -446,7 +451,7 @@ class Datacenter:
 				"range": {
 					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
 					"startColumnIndex": 0,
-					"endColumnIndex": 9
+					"endColumnIndex": 10
 				},
 				"sortSpecs": [
 					{
@@ -462,22 +467,105 @@ class Datacenter:
 		}
 		
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
 			
+			
+	#Obtain the row number of the desired data in google sheets for editing and removal purposes
+	def obtainVenueRowNumber(self, stateName, cityName, venueName):
+		#Begin with row and col at 1 because of how google sheets counts rows and columns
+		rowNum = 1
+		
+		rangeName = "Venues!A1:J"
+		self.venueGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
+		self.values = self.venueGrouping.get('values', [])
+		
+		for row in self.values:
+			if row[0] == venueName and row[1] == stateName and row[2] == cityName:
+				return rowNum
+			else:
+				rowNum += 1
+		return rowNum
+	
+	def obtainIndividualRowNumber(self, stateName, cityName, contactName):
+		#Begin with row and col at 1 because of how google sheets counts rows and columns
+		rowNum = 1
+		
+		rangeName = "Individual Contacts!A1:J"
+		self.individualGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
+		self.values = self.individualGrouping.get('values', [])
+		
+		for row in self.values:
+			if row[0] == contactName and row[1] == stateName and row[2] == cityName:
+				return rowNum
+			else:
+				rowNum += 1
+		return rowNum
+		
+	def obtainOrganizationRowNumber(self, stateName, cityName, contactName):
+		#Begin with row and col at 1 because of how google sheets counts rows and columns
+		rowNum = 1
+		
+		rangeName = "Organizational Contacts!A1:J"
+		self.organizationalGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
+		self.values = self.organizationalGrouping.get('values', [])
+		
+		for row in self.values:
+			if row[0] == contactName and row[1] == stateName and row[2] == cityName:
+				return rowNum
+			else:
+				rowNum += 1
+		return rowNum
+	
+	def editVenueRow(self):
+		pass
+	
+	def editIndividualRow(self):
+		pass
+	
+	def editOrganizationRow(self):
+		pass
+		
+	def removeVenueRow(self, rowNum):
+		requests = []
+		requests.append({
+			"deleteDimension": {
+				"range": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS",
+					"startIndex": rowNum,
+					"endIndex": rowNum+1
+				}
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		print("Row deleted")
+		population = self.populate()
+	
+	def removeIndividualRow(self):
+		pass
+	
+	def removeOrganizationRow(self):
+		pass
 	
 	#Populate the database's objects 
 	def populate(self):
 		self.states = []
 		self.stateNames = []
-		rangeName = "Venues!A1:I"
+		rangeName = "Venues!A1:J"
 		self.venueGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
-		print(self.venueGrouping)
+		#print(self.venueGrouping)
 		self.values = self.venueGrouping.get('values', [])
 		print(self.values)
 		if not self.values:
 			print("No values found, spreadsheet empty")
 		else:
 			for row in self.values:
-				print(row[1])
+				#print(row[1])
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
@@ -502,19 +590,92 @@ class Datacenter:
 						newVenue = venue.Venue(row[0])
 						selectedCity.addVenue(newVenue)
 						selectedCity.venueNames.append(row[0])
-						
-		print("*****")
-		print("*****")
-		print("*****")
-		for province in self.states:
-			print(province.stateName)
-			for locale in province.cities:
-				print("----->"+locale.cityName)
-				for shop in locale.venues:
-					print("---------->"+shop.venueName)
 					
 		#ADD FOR CONTACTS AS WELL
-		
+		rangeName = "Individual Contacts!A1:J"
+		self.contactGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
+		#print(self.contactGrouping)
+		self.values = self.contactGrouping.get('values', [])
+		#print(self.values)
+		if not self.values:
+			print("No values found, spreadsheet empty")
+		else:
+			for row in self.values:
+				#print(row[1])
+				if row[1] not in self.stateNames:
+					newState = state.State(row[1])
+					newCity = city.City(row[2])
+					newContact = contact.Contact(row[0], row[3], row[5], row[6])
+					newCity.addContact(newContact)
+					newCity.contactNames.append(row[0])
+					newState.addCity(newCity)
+					newState.cityNames.append(row[2])
+					self.states.append(newState)
+					self.stateNames.append(row[1])
+				else:
+					selectedState = self.selectState(row[1])
+					if row[2] not in selectedState.cityNames:
+						newCity = city.City(row[2])
+						newContact = contact.Contact(row[0], row[3], row[5], row[6])
+						newCity.addContact(newContact)
+						newCity.contactNames.append(row[0])
+						selectedState.addCity(newCity)
+						selectedState.cityNames.append(row[2])
+					else:
+						selectedCity = selectedState.selectCity(row[2])
+						newContact = contact.Contact(row[0], row[3], row[5], row[6])
+						selectedCity.addContact(newContact)
+						selectedCity.contactNames.append(row[0])
+						
+		rangeName = "Organizational Contacts!A1:J"
+		self.orgGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
+		#print(self.orgGrouping)
+		self.values = self.orgGrouping.get('values', [])
+		#print(self.values)
+		if not self.values:
+			print("No values found, spreadsheet empty")
+		else:
+			for row in self.values:
+				#print(row[1])
+				if row[1] not in self.stateNames:
+					newState = state.State(row[1])
+					newCity = city.City(row[2])
+					newOrganization = organization.Organization(row[0])
+					newCity.addOrganization(newOrganization)
+					newCity.organizationNames.append(row[0])
+					newState.addCity(newCity)
+					newState.cityNames.append(row[2])
+					self.states.append(newState)
+					self.stateNames.append(row[1])
+				else:
+					selectedState = self.selectState(row[1])
+					if row[2] not in selectedState.cityNames:
+						newCity = city.City(row[2])
+						newOrganization = organization.Organization(row[0])
+						newCity.addOrganization(newOrganization)
+						newCity.organizationNames.append(row[0])
+						selectedState.addCity(newCity)
+						selectedState.cityNames.append(row[2])
+					else:
+						selectedCity = selectedState.selectCity(row[2])
+						newOrganization = organization.Organization(row[0])
+						selectedCity.addOrganization(newOrganization)
+						selectedCity.organizationNames.append(row[0])
+						
+		# print("*****")
+		# print("*****")
+		# print("*****")
+		# for province in self.states:
+			# print(province.stateName)
+			# for locale in province.cities:
+				# print("----->"+locale.cityName)
+				# for shop in locale.venues:
+					# print("---------->"+shop.venueName)
+				# for person in locale.contacts:
+					# print("---------->"+person.name)
+				# for group in locale.organizations:
+					# print("---------->"+group.organizationName)
+						
 		return "Self"
 	
 	
@@ -588,13 +749,13 @@ class Datacenter:
 			
 	def printOrganizations(self):
 		for organization in self.organizations:
-			print(organization.bandName)
+			print(organization.organizationName)
 			
 	def selectOrganization(self, organizationName):
 		organizationFound = False
 		
 		for organization in self.organizations:
-			if organizationName == organization.bandName:
+			if organizationName == organization.organizationName:
 				organizationFound = True
 				return organization
 			
