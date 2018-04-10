@@ -29,6 +29,7 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.spinner import Spinner
+from kivy.config import Config
 
 #Import MapView
 from kivy.garden.mapview import MapView
@@ -46,7 +47,9 @@ from datacls import venue
 from datacls import datacenter
 from datacls import dayinfo
 from datacls import contact
-from datacls import band
+from datacls import organization
+
+Config.set("input", "mouse", "mouse,multitouch_on_demand")
 
 kivy.require('1.9.0')
 Builder.load_string("""
@@ -477,10 +480,10 @@ class CalendarViewer(RelativeLayout):
 #Provide an overall view for the Database Manager screen
 class DatabaseViewer(RelativeLayout):
 	stateCitySorterLayout = RelativeLayout(size_hint = (0.3,0.12), pos_hint = {"center_x": 0.5, "top": 0.985})
-	venueSelectorLayout = RelativeLayout(size_hint = (0.2, 0.12), pos_hint = {"center_x": 0.15, "top": 0.85})
-	venueAlterationLayout = RelativeLayout(size_hint = (0.25, 1), pos_hint = {"right": 1, "center_y": 0.5})
+	venueSelectorLayout = RelativeLayout(size_hint = (0.4, 0.12), pos_hint = {"center_x": 0.25, "top": 0.85})
+	venueAlterationLayout = RelativeLayout(size_hint = (0.125, 1), pos_hint = {"right": 1, "center_y": 0.5})
 	contactSelectorLayout = RelativeLayout(size_hint = (0.4, 0.12), pos_hint = {"center_x": 0.75, "top": 0.85})
-	contactTypeLayout = RelativeLayout(size_hint = (0.5, 1), pos_hint = {"left": 0, "center_y": 0.5})
+	contactTypeLayout = RelativeLayout(size_hint = (0.4, 1), pos_hint = {"left": 0, "center_y": 0.5})
 	contactAlterationLayout = RelativeLayout(size_hint = (0.125, 1), pos_hint = {"right": 1, "center_y": 0.5})
 	infoBoxLayout = RelativeLayout(size_hint = (0.9,0.6), pos_hint = {"center_x": 0.5, "bottom": 0.02})
 	locationInfoLayout = RelativeLayout(size_hint = (0.5, 1), pos_hint = {"left": 0, "center_y": 0.5})
@@ -488,6 +491,12 @@ class DatabaseViewer(RelativeLayout):
 	
 	def __init__(self, **kwargs):
 		self.pos_hint = {"center_x": 0.5, "bottom": 0}
+		self.selectedState = None
+		self.selectedCity = None
+		self.selectedVenue = None
+		self.statePicked = False
+		self.cityPicked = False
+		self.venuePicked = False
 		super(DatabaseViewer, self).__init__(**kwargs)
 		
 		#Add embedded layout design
@@ -507,14 +516,14 @@ class DatabaseViewer(RelativeLayout):
 		self.infoBoxLayout.add_widget(self.locationInfoLayout)
 		self.infoBoxLayout.add_widget(self.contactInfoLayout)
 		
-		#Manage widgets within the state and city selector - ON PRESS FOR STATE, REFRESH DATA WITHIN DATABASE IF DATA UNINITIALIZED AND LINK VALIDATED
-		self.stateSpinner = Spinner(text = "State", size_hint_x = 0.5, pos_hint = {"left": 0, "center_y": 0.5})
-		self.citySpinner = Spinner(text = "City", size_hint_x = 0.5, pos_hint = {"right": 1, "center_y": 0.5})
+		#Manage widgets within the state and city selector - ON PRESS FOR STATE, REFRESH DATA WITHIN DATABASE IF LINK VALIDATED
+		self.stateSpinner = Spinner(text = "State", size_hint_x = 0.5, pos_hint = {"left": 0, "center_y": 0.5}, on_press = self.stateSelection)
+		self.citySpinner = Spinner(text = "City", size_hint_x = 0.5, pos_hint = {"right": 1, "center_y": 0.5}, on_press = self.citySelection)
 		self.stateCitySorterLayout.add_widget(self.stateSpinner)
 		self.stateCitySorterLayout.add_widget(self.citySpinner)
 		
 		#Manage widgets within the venue selector layout
-		self.venueSpinner = Spinner(text = "Venue", size_hint_x = 0.75, pos_hint = {"left": 0, "center_y": 0.5})
+		self.venueSpinner = Spinner(text = "Venue", size_hint_x = 0.875, pos_hint = {"left": 0, "center_y": 0.5}, on_press = self.venueSelection)
 		self.venueSelectorLayout.add_widget(self.venueSpinner)
 		
 		#Manage widgets within the venue selector's venue alteration layout
@@ -529,15 +538,14 @@ class DatabaseViewer(RelativeLayout):
 		self.venueAlterationLayout.add_widget(self.removeVenueButton)
 		
 		#Manage widgets within the contact selector layout
-		self.contactSelectorSpinner = Spinner(text = "Contact", size_hint_x = 0.375, pos_hint = {"center_x": 0.6875, "center_y": 0.5})
-		self.contactSelectorSpinner.values = ("Contact", "Test1", "Test2", "Test3", "Test4", "Test5", "Test6", "Test7", "Test8", "Test9", "Test10")
+		self.contactSelectorSpinner = Spinner(text = "Contact", size_hint_x = 0.5, pos_hint = {"center_x": 0.625, "center_y": 0.5}, on_press = self.contactSelection)
 		self.contactSelectorLayout.add_widget(self.contactSelectorSpinner)
 		
 		#Manage widgets within the contact selector's contact type layout
-		self.contactTypeLayout.add_widget(Label(text = "Individual", size_hint = (0.75, 0.5), pos_hint = {"left": 0.5, "top": 1}))
-		self.contactTypeLayout.add_widget(Label(text = "Organization", size_hint = (0.75, 0.5), pos_hint = {"left": 0.5, "bottom": 0}))
-		self.individualRadio = CheckBox(size_hint = (0.25, 0.5), pos_hint = {"right": 1, "top": 1})	
-		self.organizationRadio = CheckBox(size_hint = (0.25, 0.5), pos_hint = {"right": 1, "bottom": 0})	
+		self.contactTypeLayout.add_widget(Label(text = "Individual", size_hint = (0.5, 0.5), pos_hint = {"left": 0.4, "top": 1}))
+		self.contactTypeLayout.add_widget(Label(text = "Organization", size_hint = (0.5, 0.5), pos_hint = {"left": 0.4, "bottom": 0}))
+		self.individualRadio = CheckBox(size_hint = (0.25, 0.5), pos_hint = {"right": 0.9, "top": 1})	
+		self.organizationRadio = CheckBox(size_hint = (0.25, 0.5), pos_hint = {"right": 0.9, "bottom": 0})	
 		self.individualRadio.text = "Individual"
 		self.individualRadio.active = True
 		self.individualRadio.group = "ContactSelection"
@@ -628,8 +636,16 @@ class DatabaseViewer(RelativeLayout):
 		contactLayout.add_widget(self.contactInput)
 		newVenuePopupLayout.add_widget(contactLayout)
 		
+		#...Email...
+		emailLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.4})
+		emailLabel = Label(text = "Email:", size_hint_x = 0.1)
+		self.emailInput = TextInput(size_hint_x = 0.9)
+		emailLayout.add_widget(emailLabel)
+		emailLayout.add_widget(self.emailInput)
+		newVenuePopupLayout.add_widget(emailLayout)
+		
 		#...notes on the contact itself...
-		notesLayout = BoxLayout(size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.4})
+		notesLayout = BoxLayout(size_hint_y = 0.2, pos_hint = {"center_x": 0.5, "top": 0.3})
 		notesLabel = Label(text = "Notes:", size_hint_x = 0.1)
 		self.notesInput = TextInput(size_hint_x = 0.9, multiline = True)
 		notesLayout.add_widget(notesLabel)
@@ -650,10 +666,33 @@ class DatabaseViewer(RelativeLayout):
 		cancelButton.bind(on_press = self.newVenuePopup.dismiss)
 	
 	def editVenue(self, instance):
-		print("Edit venue!")
+		if datacenter.linkValid is True:
+			if self.stateSpinner.text in datacenter.stateNames:
+				self.selectedState = datacenter.selectState(self.stateSpinner.text)
+				if self.citySpinner.text in self.selectedState.cityNames:
+					self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+					if self.venueSpinner.text in self.selectedCity.venueNames:
+						self.selectedVenue = self.selectedCity.selectVenue(self.venueSpinner.text)
+						rowNum = datacenter.obtainVenueRowNumber(self.stateSpinner.text, self.citySpinner.text, self.venueSpinner.text)
+						range = ("Venues!A"+str(rowNum)+":J"+str(rowNum))
+						print(range)
 	
 	def removeVenue(self, instance):
-		print("Remove venue!")
+		if datacenter.linkValid is True:
+			if self.stateSpinner.text in datacenter.stateNames:
+				self.selectedState = datacenter.selectState(self.stateSpinner.text)
+				if self.citySpinner.text in self.selectedState.cityNames:
+					self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+					if self.venueSpinner.text in self.selectedCity.venueNames:
+						self.selectedVenue = self.selectedCity.selectVenue(self.venueSpinner.text)
+						rowNum = datacenter.obtainVenueRowNumber(self.stateSpinner.text, self.citySpinner.text, self.venueSpinner.text)
+						range = ("Venues!A"+str(rowNum)+":J"+str(rowNum))
+						print(range)
+						rowNum -= 1
+						datacenter.removeVenueRow(rowNum)
+						self.stateSpinner.text = "State"
+						self.citySpinner.text = "City"
+						self.venueSpinner.text = "Venue"
 		
 	def newContact(self, instance):
 		if self.individualRadio.active == True:
@@ -717,8 +756,16 @@ class DatabaseViewer(RelativeLayout):
 			contactLayout.add_widget(self.contactInput)
 			newContactPopupLayout.add_widget(contactLayout)
 			
+			#...Email...
+			emailLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.4})
+			emailLabel = Label(text = "Email:", size_hint_x = 0.1)
+			self.emailInput = TextInput(size_hint_x = 0.9)
+			emailLayout.add_widget(emailLabel)
+			emailLayout.add_widget(self.emailInput)
+			newContactPopupLayout.add_widget(emailLayout)
+			
 			#...notes on the contact itself...
-			notesLayout = BoxLayout(size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.4})
+			notesLayout = BoxLayout(size_hint_y = 0.2, pos_hint = {"center_x": 0.5, "top": 0.3})
 			notesLabel = Label(text = "Notes:", size_hint_x = 0.1)
 			self.notesInput = TextInput(size_hint_x = 0.9, multiline = True)
 			notesLayout.add_widget(notesLabel)
@@ -799,8 +846,16 @@ class DatabaseViewer(RelativeLayout):
 			contactLayout.add_widget(self.contactInput)
 			newContactPopupLayout.add_widget(contactLayout)
 			
+			#...Email...
+			emailLayout = BoxLayout(size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 0.4})
+			emailLabel = Label(text = "Email:", size_hint_x = 0.1)
+			self.emailInput = TextInput(size_hint_x = 0.9)
+			emailLayout.add_widget(emailLabel)
+			emailLayout.add_widget(self.emailInput)
+			newContactPopupLayout.add_widget(emailLayout)
+			
 			#...notes on the contact itself...
-			notesLayout = BoxLayout(size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.4})
+			notesLayout = BoxLayout(size_hint_y = 0.2, pos_hint = {"center_x": 0.5, "top": 0.3})
 			notesLabel = Label(text = "Notes:", size_hint_x = 0.1)
 			self.notesInput = TextInput(size_hint_x = 0.9, multiline = True)
 			notesLayout.add_widget(notesLabel)
@@ -825,16 +880,58 @@ class DatabaseViewer(RelativeLayout):
 			errorPopup.open()
 	
 	def editContact(self, instance):
-		print("Edit contact!")
+		if self.individualRadio.active == True:
+			if datacenter.linkValid is True:
+				if self.stateSpinner.text in datacenter.stateNames:
+					self.selectedState = datacenter.selectState(self.stateSpinner.text)
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.contactSelectorSpinner.text in self.selectedCity.contactNames:
+							self.selectedContact = self.selectedCity.selectContact(self.contactSelectorSpinner.text)
+							rowNum = datacenter.obtainIndividualRowNumber(self.stateSpinner.text, self.citySpinner.text, self.contactSelectorSpinner.text)
+							range = ("Individual Contacts!A"+str(rowNum)+":J"+str(rowNum))
+							print(range)
+		elif self.organizationRadio.active == True:
+			if datacenter.linkValid is True:
+				if self.stateSpinner.text in datacenter.stateNames:
+					self.selectedState = datacenter.selectState(self.stateSpinner.text)
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.contactSelectorSpinner.text in self.selectedCity.organizationNames:
+							self.selectedContact = self.selectedCity.selectOrganization(self.contactSelectorSpinner.text)
+							rowNum = datacenter.obtainOrganizationRowNumber(self.stateSpinner.text, self.citySpinner.text, self.contactSelectorSpinner.text)
+							range = ("Organizational Contacts!A"+str(rowNum)+":J"+str(rowNum))
+							print(range)
 	
 	def removeContact(self, instance):
-		print("Remove contact!")
+		if self.individualRadio.active == True:
+			if datacenter.linkValid is True:
+				if self.stateSpinner.text in datacenter.stateNames:
+					self.selectedState = datacenter.selectState(self.stateSpinner.text)
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.contactSelectorSpinner.text in self.selectedCity.contactNames:
+							self.selectedContact = self.selectedCity.selectContact(self.contactSelectorSpinner.text)
+							rowNum = datacenter.obtainIndividualRowNumber(self.stateSpinner.text, self.citySpinner.text, self.contactSelectorSpinner.text)
+							range = ("Individual Contacts!A"+str(rowNum)+":J"+str(rowNum))
+							print(range)
+		elif self.organizationRadio.active == True:
+			if datacenter.linkValid is True:
+				if self.stateSpinner.text in datacenter.stateNames:
+					self.selectedState = datacenter.selectState(self.stateSpinner.text)
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.contactSelectorSpinner.text in self.selectedCity.organizationNames:
+							self.selectedContact = self.selectedCity.selectOrganization(self.contactSelectorSpinner.text)
+							rowNum = datacenter.obtainOrganizationRowNumber(self.stateSpinner.text, self.citySpinner.text, self.contactSelectorSpinner.text)
+							range = ("Organizational Contacts!A"+str(rowNum)+":J"+str(rowNum))
+							print(range)
 	
 	#Handle cases for submission of data to sheets
 	def submitVenueData(self, instance):
 		if datacenter.linkValid is True:
 			print("New venue submitted.")
-			datacenter.submitVenueDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.notesInput.text)
+			datacenter.submitVenueDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.emailInput.text, self.notesInput.text)
 			popupContent = RelativeLayout()
 			popupLabel = Label(text = "Venue submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
 			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
@@ -856,7 +953,7 @@ class DatabaseViewer(RelativeLayout):
 	def submitIndividualData(self, instance):
 		if datacenter.linkValid is True:
 			print("New individual submitted.")
-			datacenter.submitIndividualDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.notesInput.text)
+			datacenter.submitIndividualDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.emailInput.text, self.notesInput.text)
 			popupContent = RelativeLayout()
 			popupLabel = Label(text = "Contact submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
 			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
@@ -878,7 +975,7 @@ class DatabaseViewer(RelativeLayout):
 	def submitOrganizationData(self, instance):
 		if datacenter.linkValid is True:
 			print("New organization submitted.")
-			datacenter.submitOrganizationDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.notesInput.text)
+			datacenter.submitOrganizationDatabaseInfo(self.stateInput.text, self.cityInput.text, self.nameInput.text, self.addressInput.text, self.zipInput.text, self.phoneInput.text, self.linksInput.text, self.contactInput.text, self.emailInput.text, self.notesInput.text)
 			popupContent = RelativeLayout()
 			popupLabel = Label(text = "Contact submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
 			popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
@@ -896,6 +993,53 @@ class DatabaseViewer(RelativeLayout):
 			popup = Popup(title = "Submission Failed", content = popupContent, size_hint = (0.85, 0.4))
 			popup.open()
 			popupClose.bind(on_press = popup.dismiss)
+			
+	#Populate the spinners on click if the link to the database is valid and set up error catching
+	def stateSelection(self, instance):
+		print(self.stateSpinner.text)
+		if datacenter.linkValid is True:
+			datacenter.stateNames.sort()
+			self.stateSpinner.values = datacenter.stateNames
+			self.statePicked = True
+	
+	def citySelection(self, instance): 
+		print(self.citySpinner.text)
+		if datacenter.linkValid is True:
+			if self.statePicked is True:
+				if self.stateSpinner.text in datacenter.stateNames:
+					self.selectedState = datacenter.selectState(self.stateSpinner.text)
+					self.selectedState.cityNames.sort()
+					self.citySpinner.values = self.selectedState.cityNames
+					self.cityPicked = True
+	
+	def venueSelection(self, instance):
+		print(self.venueSpinner.text)
+		if self.cityPicked is True:
+			if datacenter.linkValid is True:
+				if self.citySpinner.text in self.selectedState.cityNames:
+					self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+					if self.selectedCity.cityName in self.selectedState.cityNames and len(self.selectedCity.venueNames) > 0:
+						self.selectedCity.venueNames.sort()
+						self.venueSpinner.values = self.selectedCity.venueNames
+	
+	def contactSelection(self, instance):
+		print(self.contactSelectorSpinner.text)
+		if self.individualRadio.active == True:
+			if self.cityPicked is True:
+				if datacenter.linkValid is True:
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.selectedCity.cityName in self.selectedState.cityNames and len(self.selectedCity.contactNames) > 0:
+							self.selectedCity.contactNames.sort()
+							self.contactSelectorSpinner.values = self.selectedCity.contactNames
+		elif self.organizationRadio.active == True:
+			if self.cityPicked is True:
+				if datacenter.linkValid is True:
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.selectedCity.cityName in self.selectedState.cityNames and len(self.selectedCity.organizationNames) > 0:
+							self.selectedCity.organizationNames.sort()
+							self.contactSelectorSpinner.values = self.selectedCity.organizationNames
 		
 		
 		
