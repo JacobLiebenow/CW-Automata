@@ -165,3 +165,12 @@ CHANGELOG:
 	>Likewise, a similar array was added to state.py as well as city.py
   -Edited data storage classes to mesh with new data call protocols via Google Sheets
 	>Need to populate data on clicking one of the spinners to sort by state, city, venue, etc.
+
+4/9/2018
+  -Spinners on Database Manager page now accurate list and update states, cities, venues, and contacts alike
+  -Added email field to new venue and new contact popups, and updated all classes to reflect that
+  -Set up infrastructure to edit and remove rows from sheets
+	>Added functionality to remove venues successfully
+  -City now allows for storage of contacts and organizations (think: home city)
+	>(DEV NOTE: Add search functionality?)
+  -Changed name of band.py to organization.py
