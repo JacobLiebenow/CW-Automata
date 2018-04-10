@@ -13,7 +13,7 @@ from datacls import datacenter
 from datacls import state
 from datacls import city
 from datacls import contact
-from datacls import band
+from datacls import organization
 
 class Venue:
 	
