@@ -51,6 +51,11 @@ class DayInfo:
 		else:
 			self.venueNames = venueNames
 			
+		# if coordinates is None:
+			# self.coordinates = []
+		# else:
+			# self.coordinates = coordinates	
+			
 		if contacts is None:
 			self.contacts = []
 		else:
@@ -70,6 +75,8 @@ class DayInfo:
 			self.organizationNames = []
 		else:
 			self.organizationNames = organizationNames
+			
+		
 			
 	
 	#The way a day will store its data will be a little different from the other classes.
