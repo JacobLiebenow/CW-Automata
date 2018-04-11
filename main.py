@@ -492,35 +492,44 @@ class CalendarViewer(RelativeLayout):
 		if self.dateNameLabel.text != "Day Info" and datacenter.linkValid is True:
 			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
 			if dateFound is True:
-				print("Date found, edit mode engaged!")
+				popup = Popup(title = "Edit Date", size_hint = (0.8, 0.85))
+				popup.open()
 			else: 
-				print("Date not found, adding new date!")
 				datacenter.addDate(self.dateNameLabel.text)
+				popup = Popup(title = "Add Date", size_hint = (0.8, 0.85))
+				popup.open()
 		else:
-			print("Date not initialized!")
+			popup = Popup(title = "Date not initialized", size_hint = (0.4, 0.45))
+			popup.open()
 	
 	#Remove the date from Google Sheets altogether
 	def removeDate(self, instance):
 		if self.dateNameLabel.text != "Day Info" and datacenter.linkValid is True:
 			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
 			if dateFound is True:
-				print("Date found, removing!")
 				datacenter.removeDate(self.dateNameLabel.text)
+				popup = Popup(title = "Date Removed", size_hint = (0.4, 0.45))
+				popup.open()
 			else: 
-				print("Date not found, don't even sweat it!")
+				popup = Popup(title = "Date Not Found", size_hint = (0.4, 0.45))
+				popup.open()
 		else:
-			print("Date not initialized!")
+			popup = Popup(title = "Date Not Initialized", size_hint = (0.4, 0.45))
+			popup.open()
 	
 	#Generate a popup to give more detailed date info
 	def expandDate(self, instance):
 		if self.dateNameLabel.text != "Day Info" and datacenter.linkValid is True:
 			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
 			if dateFound is True:
-				print("Date found, expanding date!")
+				popup = Popup(title = "Expanded Date", size_hint = (0.8, 0.85))
+				popup.open()
 			else: 
-				print("Date not found, ain't got nothing to show!")
+				popup = Popup(title = "Date Not Found", size_hint = (0.4, 0.45))
+				popup.open()
 		else:
-			print("Date not initialized!")
+			popup = Popup(title = "Date Not Initialized", size_hint = (0.4, 0.45))
+			popup.open()
 			
 			
 
