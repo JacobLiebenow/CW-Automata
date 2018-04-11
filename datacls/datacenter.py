@@ -277,6 +277,109 @@ class Datacenter:
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
 		population = self.populate()
 		
+	def submitEditedVenueDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes, range):
+		print("****************")
+		print(range)
+		print(submittedState)
+		print(submittedCity)
+		print(submittedName)
+		print(submittedAddress)
+		print(submittedZip)
+		print(submittedPhone)
+		print(submittedLinks)
+		print(submittedContacts)
+		print(submittedEmail)
+		print(submittedNotes)
+		print("****************")
+		
+		#Submit all relevant data to the google sheet
+		rangeName = range
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes]]
+		data = [
+			{
+				"range": rangeName,
+				"values": values
+			}
+		]
+		body = ({
+			"valueInputOption": "RAW",
+			"data": data
+		})
+		response = self.service.spreadsheets().values().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+		#Resize the data after the entries
+		requests = []
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 10
+				}
+			}
+		})
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS"
+				}
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 0,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 2,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[0].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 1,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
+		
 	def submitIndividualDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
 		print("****************")
 		print(submittedState)
@@ -299,6 +402,109 @@ class Datacenter:
 			"values": values
 		})
 		response = self.service.spreadsheets().values().append(spreadsheetId = self.spreadsheetId, range = rangeName, body = request, valueInputOption = "RAW").execute()
+		
+		#Resize the data after the entries
+		requests = []
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 10
+				}
+			}
+		})
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS"
+				}
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 0,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 2,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 1,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
+		
+	def submitEditedIndividualDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes, range):
+		print("****************")
+		print(range)
+		print(submittedState)
+		print(submittedCity)
+		print(submittedName)
+		print(submittedAddress)
+		print(submittedZip)
+		print(submittedPhone)
+		print(submittedLinks)
+		print(submittedContacts)
+		print(submittedEmail)
+		print(submittedNotes)
+		print("****************")
+		
+		#Submit all relevant data to the google sheet
+		rangeName = range
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes]]
+		data = [
+			{
+				"range": rangeName,
+				"values": values
+			}
+		]
+		body = ({
+			"valueInputOption": "RAW",
+			"data": data
+		})
+		response = self.service.spreadsheets().values().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
 		
 		#Resize the data after the entries
 		requests = []
@@ -470,6 +676,109 @@ class Datacenter:
 		population = self.populate()
 			
 			
+	def submitEditedOrganizationDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes, range):
+		print("****************")
+		print(range)
+		print(submittedState)
+		print(submittedCity)
+		print(submittedName)
+		print(submittedAddress)
+		print(submittedZip)
+		print(submittedPhone)
+		print(submittedLinks)
+		print(submittedContacts)
+		print(submittedEmail)
+		print(submittedNotes)
+		print("****************")
+		
+		#Submit all relevant data to the google sheet
+		rangeName = range
+		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes]]
+		data = [
+			{
+				"range": rangeName,
+				"values": values
+			}
+		]
+		body = ({
+			"valueInputOption": "RAW",
+			"data": data
+		})
+		response = self.service.spreadsheets().values().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+		#Resize the data after the entries, and sort it according to name of individual, followed by name of city, followed by name of state
+		requests = []
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 10
+				}
+			}
+		})
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS"
+				}
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 0,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 2,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"startColumnIndex": 0,
+					"endColumnIndex": 10
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 1,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
+			
 	#Obtain the row number of the desired data in google sheets for editing and removal purposes
 	def obtainVenueRowNumber(self, stateName, cityName, venueName):
 		#Begin with row and col at 1 because of how google sheets counts rows and columns
@@ -547,10 +856,46 @@ class Datacenter:
 		population = self.populate()
 	
 	def removeIndividualRow(self):
-		pass
+		requests = []
+		requests.append({
+			"deleteDimension": {
+				"range": {
+					"sheetId": self.sheets[1].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS",
+					"startIndex": rowNum,
+					"endIndex": rowNum+1
+				}
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		print("Row deleted")
+		population = self.populate()
 	
 	def removeOrganizationRow(self):
-		pass
+		requests = []
+		requests.append({
+			"deleteDimension": {
+				"range": {
+					"sheetId": self.sheets[2].get("properties", {}).get("sheetId", 0),
+					"dimension": "ROWS",
+					"startIndex": rowNum,
+					"endIndex": rowNum+1
+				}
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		print("Row deleted")
+		population = self.populate()
 	
 	#Populate the database's objects 
 	def populate(self):
@@ -569,7 +914,7 @@ class Datacenter:
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
-					newVenue = venue.Venue(row[0])
+					newVenue = venue.Venue(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 					newCity.addVenue(newVenue)
 					newCity.venueNames.append(row[0])
 					newState.addCity(newCity)
@@ -580,14 +925,14 @@ class Datacenter:
 					selectedState = self.selectState(row[1])
 					if row[2] not in selectedState.cityNames:
 						newCity = city.City(row[2])
-						newVenue = venue.Venue(row[0])
+						newVenue = venue.Venue(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						newCity.addVenue(newVenue)
 						newCity.venueNames.append(row[0])
 						selectedState.addCity(newCity)
 						selectedState.cityNames.append(row[2])
 					else:
 						selectedCity = selectedState.selectCity(row[2])
-						newVenue = venue.Venue(row[0])
+						newVenue = venue.Venue(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						selectedCity.addVenue(newVenue)
 						selectedCity.venueNames.append(row[0])
 					
@@ -605,7 +950,7 @@ class Datacenter:
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
-					newContact = contact.Contact(row[0], row[3], row[5], row[6])
+					newContact = contact.Contact(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 					newCity.addContact(newContact)
 					newCity.contactNames.append(row[0])
 					newState.addCity(newCity)
@@ -616,14 +961,14 @@ class Datacenter:
 					selectedState = self.selectState(row[1])
 					if row[2] not in selectedState.cityNames:
 						newCity = city.City(row[2])
-						newContact = contact.Contact(row[0], row[3], row[5], row[6])
+						newContact = contact.Contact(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						newCity.addContact(newContact)
 						newCity.contactNames.append(row[0])
 						selectedState.addCity(newCity)
 						selectedState.cityNames.append(row[2])
 					else:
 						selectedCity = selectedState.selectCity(row[2])
-						newContact = contact.Contact(row[0], row[3], row[5], row[6])
+						newContact = contact.Contact(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						selectedCity.addContact(newContact)
 						selectedCity.contactNames.append(row[0])
 						
@@ -640,7 +985,7 @@ class Datacenter:
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
-					newOrganization = organization.Organization(row[0])
+					newOrganization = organization.Organization(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 					newCity.addOrganization(newOrganization)
 					newCity.organizationNames.append(row[0])
 					newState.addCity(newCity)
@@ -651,14 +996,14 @@ class Datacenter:
 					selectedState = self.selectState(row[1])
 					if row[2] not in selectedState.cityNames:
 						newCity = city.City(row[2])
-						newOrganization = organization.Organization(row[0])
+						newOrganization = organization.Organization(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						newCity.addOrganization(newOrganization)
 						newCity.organizationNames.append(row[0])
 						selectedState.addCity(newCity)
 						selectedState.cityNames.append(row[2])
 					else:
 						selectedCity = selectedState.selectCity(row[2])
-						newOrganization = organization.Organization(row[0])
+						newOrganization = organization.Organization(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						selectedCity.addOrganization(newOrganization)
 						selectedCity.organizationNames.append(row[0])
 						
