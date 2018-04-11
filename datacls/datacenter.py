@@ -914,7 +914,7 @@ class Datacenter:
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
-					newVenue = venue.Venue(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+					newVenue = venue.Venue(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 					newCity.addVenue(newVenue)
 					newCity.venueNames.append(row[0])
 					newState.addCity(newCity)
@@ -925,14 +925,14 @@ class Datacenter:
 					selectedState = self.selectState(row[1])
 					if row[2] not in selectedState.cityNames:
 						newCity = city.City(row[2])
-						newVenue = venue.Venue(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+						newVenue = venue.Venue(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						newCity.addVenue(newVenue)
 						newCity.venueNames.append(row[0])
 						selectedState.addCity(newCity)
 						selectedState.cityNames.append(row[2])
 					else:
 						selectedCity = selectedState.selectCity(row[2])
-						newVenue = venue.Venue(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+						newVenue = venue.Venue(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						selectedCity.addVenue(newVenue)
 						selectedCity.venueNames.append(row[0])
 					
