@@ -10,106 +10,150 @@ import datetime
 from datacls import state
 from datacls import city
 from datacls import venue
+from datacls import contact
+from datacls import organization
 from datacls import datacenter
 
 class DayInfo:
 
-	stateNumber = 0
-	cityNumber = 0
-	venueNumber = 0
 	stateNamePointer = ""
 	
-	def __init__(self, year, month, day, database, states = None, cities = None, venues = None):
-		self.calendarDate = datetime.date(year, month, day)
-		self.datacenter = database
+	def __init__(self, dateName, venues = None, venueNames = None, contacts = None, contactNames = None, organizations = None, organizationName = None):
+		self.dateName = dateName
 		
-		if states is None:
-			self.states = []
-		else: 
-			self.states = states
-			for state in self.states:
-				self.stateNumber += 1
+		# if states is None:
+			# self.states = []
+		# else:
+			# self.states = states
 			
-		if cities is None:
-			self.cities = []
-		else:
-			self.cities = cities
-			for city in self.cities:
-				self.cityNumber += 1
+		# if stateNames is None:
+			# self.stateNames = []
+		# else:
+			# self.stateNames = stateNames
+			
+		# if cities is None:
+			# self.cities = []
+		# else:
+			# self.cities = cities
+		
+		# if cityNames is None:
+			# self.cityNames = []
+		# else: 
+			# self.cityNames = cityNames
 		
 		if venues is None:
 			self.venues = []
 		else:
 			self.venues = venues
-			for venue in self.venues:
-				self.venueNumber += 1
+			
+		if venueNames is None:
+			self.venueNames = []
+		else:
+			self.venueNames = venueNames
+			
+		if contacts is None:
+			self.contacts = []
+		else:
+			self.contacts = contacts
+		
+		if contactNames is None:
+			self.contactNames = []
+		else:
+			self.contactNames = contactNames
+			
+		if organizations is None:
+			self.organizations = []
+		else:
+			self.organizations = organizations
+			
+		if organizationNames is None:
+			self.organizationNames = []
+		else:
+			self.organizationNames = organizationNames
 			
 	
 	#The way a day will store its data will be a little different from the other classes.
-	#Similar to datacenter, it will select states, cities, and venues based off their names.  However, 
-	#the states, cities, and venues, while being identical to that info stored in the datacenter, will
-	#be copies of those objects as opposed to the objects themselves.
-	#
-	#These functions add states, cities, and venues found in the Datacenter object...
-	def addState(self, stateName):
-		statePointer = self.datacenter.selectState(stateName)
-		if statePointer not in self.states:
-			self.states.append(statePointer)
-			self.stateNumber += 1
-		else:
-			print("State by the name of '",stateName,"' not found.  Check spelling or if the state was in the database.")
+	#Similar to datacenter, it will select venues, contacts, and organizations based off their names.
+	#These objects will be sourced from datacenter
 			
-	def addCity(self, stateName, cityName):
-		statePointer = self.datacenter.selectState(stateName)
-		cityPointer = statePointer.selectCity(cityName)
-		if cityPointer not in self.cities:
-			self.cities.append(cityPointer)
-			self.cityNumber += 1
-		else:
-			print("City by the name of '",cityName,"' not found.  Check spelling or if the city was in the database.")
-			
-	def addVenue(self, stateName, cityName, venueName):
-		statePointer = self.datacenter.selectState(stateName)
-		cityPointer = statePointer.selectCity(cityName)
-		venuePointer = cityPointer.selectVenue(venueName)
-		if venuePointer not in self.venues:
-			self.venues.append(venuePointer)
-			self.venueNumber += 1
+	#Add venues, contacts, and organizations based off of the datacenter object
+	def addVenue(self, state, city, venue):
+		if venue not in self.venues:
+			self.venues.append(venue)
+			self.venueNames.append(venue.venueName)
 		else: 
-			print("Venue by the name of '",venueName,"' not found.  Check spelling or if the venue was in the database.")
-	
-
-	#...remove states, cities, and venues found in the DayInfo object...
-	def removeState(self, stateName):
-		statePointer = self.datacenter.selectState(stateName)
-		if statePointer in self.states:
-			self.states.remove(statePointer)
-			self.stateNumber -= 1
-		
-	def removeCity(self, stateName, cityName):
-		statePointer = self.datacenter.selectState(stateName)
-		cityPointer = statePointer.selectCity(cityName)
-		if cityPointer in self.cities:
-			self.cities.remove(cityPointer)
-			self.cityNumber -= 1
+			print("Venue by the name of '",venue.venueName,"' not found.  Check spelling or if the venue was in the database.")
 			
-	def removeVenue(self, stateName, cityName, venueName):
-		statePointer = self.datacenter.selectState(stateName)
-		cityPointer = statePointer.selectCity(cityName)
-		venuePointer = cityPointer.selectVenue(venueName)
-		if venuePointer in self.venues:
-			self.venues.remove(venuePointer)
-			self.venueNumber -= 1
+	def addContact(self, contact):
+		if contact not in self.contacts:
+			self.contacts.append(contact)
+			self.contactNames.append(contact.name)
+		else: 
+			print("Organization by the name of '",contact.name,"' not found.  Check spelling or if the organization was in the database.")
+			
+	def addOrganization(self, organization):
+		if organization not in self.organizations:
+			self.organizations.append(organization)
+			self.organizationNames.append(organization.organizationName)
+		else: 
+			print("Organization by the name of '",organization.organizationName,"' not found.  Check spelling or if the organization was in the database.")
 	
 	
-	#...and print data from the DayInfo object.
-	def printStates(self):
-		for state in self.states:
-			print(state.stateName)
+	#Remove a selected venue, contact, or organization		
+	def removeVenue(self, venue):
+		if venue in self.venues:
+			self.venues.remove(venue)
+			self.venueNames.remove(venue.venueName)
+			
+	def removeContact(self, contact):
+		if contact in self.contacts:
+			self.contacts.remove(contact)
+			self.contactNames.remove(contact.name)
 	
-	def printCities(self):
-		for city in self.cities:
-			print(city.cityName)
+	def removeOrganization(self, organization):
+		if organization in self.organizations:
+			self.organizations.remove(organization)
+			self.organizationNames.remove(organization.organizationName)
+	
+	
+	#Add functionality to select venue, contact, and organization within the dayinfo object
+	def selectVenue(self, venueName):
+		venueFound = False
+		
+		for venue in self.venues:
+			if venueName == venue.venueName:
+				venueFound = True
+				return venue
+		
+		if venueFound == False:
+			print("No venue found by the name '"+venueName+"'")
+			return None
+			
+	def selectContact(self, contactName):
+		contactFound = False
+		
+		for contact in self.contacts:
+			if contactName == contact.name:
+				contactFound = True
+				return contact
+		
+		if contactFound == False:
+			print("No contact found by the name '"+contactName+"'")
+			return None
+			
+	def selectOrganization(self, organizationName):
+		organizationFound = False
+		
+		for organization in self.organizations:
+			if organizationName == organization.organizationName:
+				organizationFound = True
+				return organization
+		
+		if organizationFound == False:
+			print("No organization found by the name '"+organizationName+"'")
+			return None
+			
+			
 			
 	def printVenues(self):
 		for venue in self.venues:
