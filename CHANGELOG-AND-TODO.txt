@@ -190,3 +190,4 @@ CHANGELOG:
   -Added "Add" and "Remove" date functions to datacenter to create or delete sheets on Google Spreadsheet
   based off date name.
   -Added coordinates to venue to be updated at Runtime based of geopy
+  -Updated venues to contain state name and city name, so each venue object is a fully-contained, usable address
