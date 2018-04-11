@@ -30,9 +30,6 @@ class Venue:
 		self.contacts = contacts
 		self.email = email
 		self.notes = notes
-
-		self.latitude = 0
-		self.longitude = 0
 		
 		
 		if roles is None:
