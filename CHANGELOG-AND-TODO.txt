@@ -182,3 +182,10 @@ CHANGELOG:
   -Added refresh buttons for info boxes
   -Replaced info box buttons with actual info boxes
 	>Refresh buttons now refresh all data in boxes on press according to selected location/contact
+
+4/11/2018
+  -Changed MapView to python-based as opposed to kv-based to allow for dynamic updating
+  -Reworked DayInfo points of data stored
+  -Added new/edit, remove, and expand day buttons to calendar view
+  -Added "Add" and "Remove" date functions to datacenter to create or delete sheets on Google Spreadsheet
+  based off date name.
