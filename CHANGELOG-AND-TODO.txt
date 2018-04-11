@@ -189,3 +189,4 @@ CHANGELOG:
   -Added new/edit, remove, and expand day buttons to calendar view
   -Added "Add" and "Remove" date functions to datacenter to create or delete sheets on Google Spreadsheet
   based off date name.
+  -Added coordinates to venue to be updated at Runtime based of geopy
