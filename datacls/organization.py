@@ -10,8 +10,15 @@ from datacls import contact
 
 class Organization:
 	
-	def __init__(self, name, contacts=None, roles=None):
+	def __init__(self, name, address, zip, phone, links, members, email, notes, contacts=None, roles=None):
 		self.organizationName = name
+		self.address = address
+		self.zip = str(zip)
+		self.phone = str(phone)
+		self.links = links
+		self.members = members
+		self.email = email
+		self.notes = notes
 		
 		if contacts is None:
 			self.contacts = []
