@@ -1,50 +1,115 @@
 #Written by: Jacob S Liebenow
-#
-#
-#
-#Each venue has an associated name, address, bands, and promoters that frequent the establishment.
-#
-#DevNote(3/20/2018, 11:48AM EST): I have to wonder if it would be more efficient to organize this into 
-#multiple classes in a single python module.  It would make the imports decidedly less messy, however it
-#would make the modules themselves more messy.  Something to weigh, although I'm inclined to continue down
-#the multi-module route.  It's good OOP practice if nothing else, and what I'm used to from Java.
 
-from datacls import datacenter
-from datacls import state
-from datacls import city
+
+
+from datacls import venue
 from datacls import contact
 from datacls import organization
 
-class Venue:
-	
-	#Each venue has associated bands and promoters/bookers...
-	#...however those bands and bookers aren't tied solely to a specific venue, or even a city or state
-	def __init__(self, venueName, address, zip, phone, links, contacts, email, notes, roles=None, managers=None):
-		self.venueName = venueName
-		self.address = address
-		self.zip = str(zip)
-		self.phone = str(phone)
-		self.links = links
-		self.contacts = contacts
-		self.email = email
-		self.notes = notes
+#The city is the primary unit of organization, containing the most data. Cities are
+#organized into states, but the cities themselves contain venues, bands, etc.
+
+class City:
+
+
+	#Each city consists of its own name, venues, bands (to be added), and promoters/bookers (to be added)
+	def __init__(self, cityName, venues = None, venueNames = None, contacts = None, contactNames = None, organizations = None, organizationNames = None):
+		self.cityName = cityName
 		
-		if roles is None:
-			self.roles = []
-		else: 
-			self.roles = roles
-		
-		if managers is None:
-			self.managers = []
+		if venues is None:
+			self.venues = []
 		else:
-			self.managers = managers
+			self.venues = venues
 		
-	
-	def addManager(self, roleName, contact):
-	
-		if roleName not in self.roles:
-			contact.addManagerRole(self.venueName, roleName)
-			self.roles.append(roleName)
+		if venueNames is None:
+			self.venueNames = []
+		else: 
+			self.venueNames = venueNames
 		
-		if contact not in self.managers:	
-			self.managers.append(contact)
+		if contacts is None:
+			self.contacts = []
+		else:
+			self.contacts = contacts
+			
+		if contactNames is None:
+			self.contactNames = []
+		else:
+			self.contactNames = contactNames
+		
+		if organizations is None:
+			self.organizations = []
+		else:
+			self.organizations = organizations
+			
+		if organizationNames is None:
+			self.organizationNames = []
+		else:
+			self.organizationNames = organizationNames
+		
+	#The following 3 functions are self explanatory by title - add, remove, or print venues
+	def addVenue(self, venue):
+		if venue not in self.venues:
+			self.venues.append(venue)
+			
+	def removeVenue(self, venue):
+		if venue in self.venues:
+			self.venues.remove(venue)
+			
+	def printVenues(self):
+		for venue in self.venues:
+			print("----->", venue.venueName)
+			
+	def selectVenue(self, venueName):
+		venueFound = False
+		
+		for venue in self.venues:
+			if venueName == venue.venueName:
+				venueFound = True
+				return venue
+		
+		if venueFound == False:
+			print(("No venue found by the name '"+venueName+"'"))
+			return None
+		
+
+		
+	def addContact(self, contact):
+		if contact not in self.contacts:
+			self.contacts.append(contact)
+			
+	def removeContact(self, contact):
+		if contact in self.contacts:
+			self.contacts.remove(contact)
+			
+	def selectContact(self, contactName):
+		contactFound = False
+		
+		for contact in self.contacts:
+			if contactName == contact.name:
+				contactFound = True
+				return contact
+		
+		if contactFound == False:
+			print(("No contact found by the name '"+contactName+"'"))
+			return None
+			
+			
+	def addOrganization(self, organization):
+		if organization not in self.organizations:
+			self.organizations.append(organization)
+			
+	def removeOrganization(self, organization):
+		if organization in self.organizations:
+			self.organizations.remove(organization)
+			
+	def selectOrganization(self, organizationName):
+		organizationFound = False
+		
+		for organization in self.organizations:
+			if organizationName == organization.organizationName:
+				organizationFound = True
+				return organization
+		
+		if organizationFound == False:
+			print(("No organization found by the name '"+organizationName+"'"))
+			return None
