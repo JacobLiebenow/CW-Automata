@@ -29,6 +29,12 @@ class Venue:
 		self.email = email
 		self.notes = notes
 		
+		self.stateName = ""
+		self.cityName = ""
+		self.latitude = 0
+		self.longitude = 0
+		
+		
 		if roles is None:
 			self.roles = []
 		else: 
