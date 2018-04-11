@@ -28,26 +28,30 @@ from datacls import venue
 class Contact:
 	
 	
-	def __init__(self, name, address, phoneNumber, email, links=None, roles=None, bands=None):
+	def __init__(self, name, address, zip, phone, links, associations, email, notes, roles=None):
 		self.name = name
 		self.address = address
-		self.phoneNumber = phoneNumber
+		self.zip = str(zip)
+		self.phone = str(phone)
+		self.links = links
+		self.associations = associations
 		self.email = email
+		self.notes = notes
 		
-		if links is None:
-			self.links = []
-		else: 
-			self.links = links
+		# if links is None:
+			# self.links = []
+		# else: 
+			# self.links = links
 			
 		if roles is None:
 			self.roles = []
 		else:
 			self.roles = roles
 			
-		if bands is None:
-			self.bands = []
-		else:
-			self.bands = bands
+		# if bands is None:
+			# self.bands = []
+		# else:
+			# self.bands = bands
 
 	
 	
