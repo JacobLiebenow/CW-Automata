@@ -21,26 +21,6 @@ class DayInfo:
 	def __init__(self, dateName, venues = None, venueNames = None, contacts = None, contactNames = None, organizations = None, organizationName = None):
 		self.dateName = dateName
 		
-		# if states is None:
-			# self.states = []
-		# else:
-			# self.states = states
-			
-		# if stateNames is None:
-			# self.stateNames = []
-		# else:
-			# self.stateNames = stateNames
-			
-		# if cities is None:
-			# self.cities = []
-		# else:
-			# self.cities = cities
-		
-		# if cityNames is None:
-			# self.cityNames = []
-		# else: 
-			# self.cityNames = cityNames
-		
 		if venues is None:
 			self.venues = []
 		else:
