@@ -19,8 +19,15 @@ class Venue:
 	
 	#Each venue has associated bands and promoters/bookers...
 	#...however those bands and bookers aren't tied solely to a specific venue, or even a city or state
-	def __init__(self, venueName, roles=None, managers=None):
+	def __init__(self, venueName, address, zip, phone, links, contacts, email, notes, roles=None, managers=None):
 		self.venueName = venueName
+		self.address = address
+		self.zip = str(zip)
+		self.phone = str(phone)
+		self.links = links
+		self.contacts = contacts
+		self.email = email
+		self.notes = notes
 		
 		if roles is None:
 			self.roles = []
