@@ -1023,7 +1023,50 @@ class Datacenter:
 						
 		return "Self"
 	
-	
+	def dateFinder(self, dateName):
+		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
+		self.sheets = self.sheetMetadata.get("sheets", "")
+		for sheet in self.sheets:
+			self.title = sheet.get("properties", {}).get("title", "someTitle")
+			print(self.title)
+			if self.title == dateName:
+				return True
+		return False
+		
+	def addDate(self, dateName):
+		requests = []
+		requests.append({
+				"addSheet": {
+					"properties": {
+						"title": dateName
+					}
+				}
+			})
+			
+		body = {
+			"requests": requests
+		}
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+	def removeDate(self, dateName):
+		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
+		self.sheets = self.sheetMetadata.get("sheets", "")
+		for sheet in self.sheets:
+			self.title = sheet.get("properties", {}).get("title", "someTitle")
+			if self.title == dateName:
+				self.sheetId = sheet.get("properties", {}).get("sheetId", 0)
+		requests = []
+		requests.append({
+				"deleteSheet": {
+					"sheetId":self.sheetId
+				}
+			})
+		body = {
+			"requests": requests
+		}
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+			
 	
 	#The following 3 functions are self-explanatory by title - add, remove, and print states
 	def addState(self, state):
