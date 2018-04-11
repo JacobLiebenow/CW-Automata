@@ -174,3 +174,11 @@ CHANGELOG:
   -City now allows for storage of contacts and organizations (think: home city)
 	>(DEV NOTE: Add search functionality?)
   -Changed name of band.py to organization.py
+
+4/10/2018 (UPDATED TO InFDev 0.0.7)
+  -Remove functions now online for contacts and organizations
+  -All data in google sheets now represented in venue, contact, and organization objects
+  -Edit functions now online for venues, contacts, and organizations
+  -Added refresh buttons for info boxes
+  -Replaced info box buttons with actual info boxes
+	>Refresh buttons now refresh all data in boxes on press according to selected location/contact
