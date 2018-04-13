@@ -28,8 +28,10 @@ from datacls import venue
 class Contact:
 	
 	
-	def __init__(self, name, address, zip, phone, links, associations, email, notes, roles=None):
+	def __init__(self, name, stateName, cityName, address, zip, phone, links, associations, email, notes, roles=None):
 		self.name = name
+		self.stateName = stateName
+		self.cityName = cityName
 		self.address = address
 		self.zip = str(zip)
 		self.phone = str(phone)
