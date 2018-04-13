@@ -47,7 +47,7 @@ class Datacenter:
 	#bands, bookers, promoters, and whoever else might be considered relevant.  Contacts might normally be
 	#organized by city, but I'd like overall contact searching functionality irrespective of location.  Another
 	#possible branch - days, which has one or more associated states/cities (otherwise considered travel days)
-	def __init__(self, link, states = None, stateNames = None, individuals = None, individualNames = None, organizations = None, organizationNames = None):
+	def __init__(self, link, states = None, stateNames = None, individuals = None, individualNames = None, organizations = None, organizationNames = None, dates = None, dateNames = None):
 		self.link = link
 		self.spreadsheetID = "Dummy ID"
 		self.service = None
@@ -80,6 +80,16 @@ class Datacenter:
 			self.organizationNames = []
 		else:
 			self.organizationNames = organizationNames
+			
+		if dates is None:
+			self.dates = []
+		else:
+			self.dates = dates
+		
+		if dateNames is None:
+			self.dateNames = []
+		else:
+			self.dateNames = dateNames
 			
 	#Function to obtain user's google OAuth2.0 credentials from client_secret.json
 	def getCredentials(self):
@@ -779,6 +789,225 @@ class Datacenter:
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
 		population = self.populate()
 			
+	def submitDate(self, submittedDate):
+		print("Notes added to "+submittedDate.dateName)
+		
+		#Update the notes first...
+		rangeName = submittedDate.dateName+"!A1:A1"
+		values = [[submittedDate.notes]]
+		data = [
+			{
+				"range": rangeName,
+				"values": values
+			}
+		]
+		body = ({
+			"valueInputOption": "RAW",
+			"data": data
+		})
+		response = self.service.spreadsheets().values().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+		#...and then update the venues, contacts, and organizations met that day
+		rangeName = submittedDate.dateName+"!B2:L"
+		values = []
+		for venue in submittedDate.venues:
+			venueRange = []
+			venueRange.append("Venue")
+			venueRange.append(venue.venueName)
+			venueRange.append(venue.stateName)
+			venueRange.append(venue.cityName)
+			venueRange.append(venue.address)
+			venueRange.append(venue.zip)
+			venueRange.append(venue.phone)
+			venueRange.append(venue.links)
+			venueRange.append(venue.contacts)
+			venueRange.append(venue.email)
+			venueRange.append(venue.notes)
+			values.append(venueRange)
+		for contact in submittedDate.contacts:
+			contactRange = []
+			contactRange.append("Individual")
+			contactRange.append(contact.name)
+			contactRange.append(contact.stateName)
+			contactRange.append(contact.cityName)
+			contactRange.append(contact.address)
+			contactRange.append(contact.zip)
+			contactRange.append(contact.phone)
+			contactRange.append(contact.links)
+			contactRange.append(contact.associations)
+			contactRange.append(contact.email)
+			contactRange.append(contact.notes)
+			values.append(contactRange)
+		for organization in submittedDate.organizations:
+			organizationRange = []
+			organizationRange.append("Organization")
+			organizationRange.append(organization.organizationName)
+			organizationRange.append(organization.stateName)
+			organizationRange.append(organization.cityName)
+			organizationRange.append(organization.address)
+			organizationRange.append(organization.zip)
+			organizationRange.append(organization.phone)
+			organizationRange.append(organization.links)
+			organizationRange.append(organization.members)
+			organizationRange.append(organization.email)
+			organizationRange.append(organization.notes)
+			values.append(organizationRange)
+			
+		data = [
+			{
+				"range": rangeName,
+				"values": values
+			}
+		]
+		body = ({
+			"valueInputOption": "RAW",
+			"data": data
+		})
+		response = self.service.spreadsheets().values().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+		#Obtain the sheetId for the sheet in question
+		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
+		self.sheets = self.sheetMetadata.get("sheets", "")
+		for sheet in self.sheets:
+			self.title = sheet.get("properties", {}).get("title", "someTitle")
+			print(self.title)
+			if self.title == submittedDate.dateName:
+				self.sheetId = sheet.get("properties", {}).get("sheetId", 0)
+		
+		#Finally, sort all the data and resize all necessary columns and rows
+		requests = []
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheetId,
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 12
+				}
+			}
+		})
+		requests.append({
+			"autoResizeDimensions": {
+				"dimensions": {
+					"sheetId": self.sheetId,
+					"dimension": "ROWS"
+				}
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheetId,
+					"startColumnIndex": 1,
+					"endColumnIndex": 12,
+					"startRowIndex": 1
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 1,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheetId,
+					"startColumnIndex": 1,
+					"endColumnIndex": 12,
+					"startRowIndex": 1
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 2,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheetId,
+					"startColumnIndex": 1,
+					"endColumnIndex": 12,
+					"startRowIndex": 1
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 4,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		requests.append({
+			"sortRange": {
+				"range": {
+					"sheetId": self.sheetId,
+					"startColumnIndex": 1,
+					"endColumnIndex": 12,
+					"startRowIndex": 1
+				},
+				"sortSpecs": [
+					{
+					"dimensionIndex": 3,
+					"sortOrder": "ASCENDING"
+					}
+				]
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
+		
+	def submitEditedDate(self, submittedDate):
+		#Begin by finding the spreadsheet so that the spreadsheet Id can be obtained
+		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
+		self.sheets = self.sheetMetadata.get("sheets", "")
+		for sheet in self.sheets:
+			self.title = sheet.get("properties", {}).get("title", "someTitle")
+			print(self.title)
+			if self.title == submittedDate.dateName:
+				self.sheetId = sheet.get("properties", {}).get("sheetId", 0)
+		
+		#Remove all prior data on the sheet...
+		requests = []
+		requests.append({
+			"deleteDimension": {
+				"range": {
+					"sheetId": self.sheetId,
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 12
+				}
+			}
+		})
+		requests.append({
+			"insertDimension": {
+				"range": {
+					"sheetId": self.sheetId,
+					"dimension": "COLUMNS",
+					"startIndex": 0,
+					"endIndex": 12
+				}
+			}
+		})
+		
+		body = {
+			"requests": requests
+		}
+		
+		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		
+		#...and replace it with the new data.
+		self.submitDate(submittedDate)
+		
 	#Obtain the row number of the desired data in google sheets for editing and removal purposes
 	def obtainVenueRowNumber(self, stateName, cityName, venueName):
 		#Begin with row and col at 1 because of how google sheets counts rows and columns
@@ -899,8 +1128,16 @@ class Datacenter:
 	
 	#Populate the database's objects 
 	def populate(self):
+		#Reset all lists of data back to their null states
 		self.states = []
 		self.stateNames = []
+		self.individuals = []
+		self.individualNames = []
+		self.organizations = []
+		self.organizationNames = []
+		self.dates = []
+		self.dateNames = []
+		
 		rangeName = "Venues!A1:J"
 		self.venueGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
 		#print(self.venueGrouping)
@@ -950,7 +1187,7 @@ class Datacenter:
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
-					newContact = contact.Contact(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+					newContact = contact.Contact(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 					newCity.addContact(newContact)
 					newCity.contactNames.append(row[0])
 					newState.addCity(newCity)
@@ -961,14 +1198,14 @@ class Datacenter:
 					selectedState = self.selectState(row[1])
 					if row[2] not in selectedState.cityNames:
 						newCity = city.City(row[2])
-						newContact = contact.Contact(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+						newContact = contact.Contact(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						newCity.addContact(newContact)
 						newCity.contactNames.append(row[0])
 						selectedState.addCity(newCity)
 						selectedState.cityNames.append(row[2])
 					else:
 						selectedCity = selectedState.selectCity(row[2])
-						newContact = contact.Contact(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+						newContact = contact.Contact(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						selectedCity.addContact(newContact)
 						selectedCity.contactNames.append(row[0])
 						
@@ -985,7 +1222,7 @@ class Datacenter:
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
-					newOrganization = organization.Organization(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+					newOrganization = organization.Organization(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 					newCity.addOrganization(newOrganization)
 					newCity.organizationNames.append(row[0])
 					newState.addCity(newCity)
@@ -996,31 +1233,49 @@ class Datacenter:
 					selectedState = self.selectState(row[1])
 					if row[2] not in selectedState.cityNames:
 						newCity = city.City(row[2])
-						newOrganization = organization.Organization(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+						newOrganization = organization.Organization(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						newCity.addOrganization(newOrganization)
 						newCity.organizationNames.append(row[0])
 						selectedState.addCity(newCity)
 						selectedState.cityNames.append(row[2])
 					else:
 						selectedCity = selectedState.selectCity(row[2])
-						newOrganization = organization.Organization(row[0], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+						newOrganization = organization.Organization(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 						selectedCity.addOrganization(newOrganization)
 						selectedCity.organizationNames.append(row[0])
 						
-		# print("*****")
-		# print("*****")
-		# print("*****")
-		# for province in self.states:
-			# print(province.stateName)
-			# for locale in province.cities:
-				# print("----->"+locale.cityName)
-				# for shop in locale.venues:
-					# print("---------->"+shop.venueName)
-				# for person in locale.contacts:
-					# print("---------->"+person.name)
-				# for group in locale.organizations:
-					# print("---------->"+group.organizationName)
-						
+		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
+		self.sheets = self.sheetMetadata.get("sheets", "")
+		print(self.sheets)
+		for sheet in self.sheets:
+			self.title = sheet.get("properties", {}).get("title", "someTitle")
+			
+			if self.title == "Venues" or self.title == "Individual Contacts" or self.title == "Organizational Contacts":
+				print("Initial sheet detected.  Continuing...")
+			else:
+				dateRange = self.title+"!A1:L"
+				self.dateGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=dateRange).execute()
+				dateValues = self.dateGrouping.get("values", [])
+				print(dateValues)
+				newDate = dayinfo.DayInfo(self.title)
+				for row in dateValues:
+					print(row)
+					if row[0] != "":
+						newDate.notes = row[0]
+					elif row[1] != "":
+						if row[1] == "Venue":
+							newVenue = venue.Venue(row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+							newDate.addVenue(newVenue)
+						elif row[1] == "Individual":
+							newContact = contact.Contact(row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+							newDate.addContact(newContact)
+						elif row[1] == "Organization":
+							newOrganization = organization.Organization(row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+							newDate.addOrganization(newOrganization)
+				self.addDate(newDate)
+				self.dateNames.append(newDate.dateName)
+				
+				
 		return "Self"
 	
 	def dateFinder(self, dateName):
@@ -1033,7 +1288,7 @@ class Datacenter:
 				return True
 		return False
 		
-	def addDate(self, dateName):
+	def addDateToSpreadsheet(self, dateName):
 		requests = []
 		requests.append({
 				"addSheet": {
@@ -1047,8 +1302,9 @@ class Datacenter:
 			"requests": requests
 		}
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
+		population = self.populate()
 		
-	def removeDate(self, dateName):
+	def removeDateFromSpreadsheet(self, dateName):
 		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
 		self.sheets = self.sheetMetadata.get("sheets", "")
 		for sheet in self.sheets:
@@ -1065,14 +1321,13 @@ class Datacenter:
 			"requests": requests
 		}
 		response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
-		
+		population = self.populate()
 			
 	
 	#The following 3 functions are self-explanatory by title - add, remove, and print states
 	def addState(self, state):
 		if state not in self.states:
 			self.states.append(state)
-			self.stateNumber += 1
 		
 	def removeState(self, state):
 		if state in self.states:
@@ -1150,3 +1405,29 @@ class Datacenter:
 		if organizationFound == False:
 			print("No organization found by the name of '",organizationName,"'")
 			print("Check spelling and make sure contact was initialized")
+	
+	
+	#Finally, it will handle dates.
+	def addDate(self, date):
+		if date not in self.dates:
+			self.dates.append(date)
+		
+	def removeDate(self, date):
+		if date in self.dates:
+			self.dates.remove(date)
+					
+	def printDates(self):
+		for date in self.dates:
+			print(date.dateName)
+				
+	def selectDate(self, dateName):
+		dateFound = False
+		
+		for date in self.dates:
+			if dateName == date.dateName:
+				dateFound = True
+				return date
+		
+		if dateFound == False:
+			print("No date found by the name '",dateName,"'")
+			return None
