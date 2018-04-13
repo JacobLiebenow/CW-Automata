@@ -190,3 +190,11 @@ CHANGELOG:
   -Added "Add" and "Remove" date functions to datacenter to create or delete sheets on Google Spreadsheet
   based off date name.
   -Updated venues to contain state name and city name, so each venue object is a fully-contained, usable address
+
+4/12/2018 (UPDATED TO Alpha 0.1)
+  -Added popups for add and edit functions for calendar
+  -Added full google sheet management
+  -Date sheets are now added upon submission of new day (previously was created on menu popup)
+  -Added geolocation services via Nominatim
+  -Added expanded view for date
+  -Reworked data classes, namely providing references to states and cities within venues, contacts, and organizations
