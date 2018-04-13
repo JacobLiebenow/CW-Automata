@@ -1,6 +1,6 @@
 #Written by: Jacob S Liebenow
-#Version: 0.0.7
-#Stage: InFDev/Pre-alpha
+#Version: 0.1
+#Stage: Alpha
 #
 #
 #
@@ -35,9 +35,10 @@ from kivy.config import Config
 
 #Import MapView
 from kivy.garden.mapview import MapView
+from kivy.garden.mapview import MapMarker
 
 #Import geopy
-from geopy import geocoders
+from geopy.geocoders import Nominatim
 
 #Import Calendar classes
 import datetime
@@ -332,7 +333,8 @@ class CalendarViewer(RelativeLayout):
 	dateInfoViewer = RelativeLayout(size_hint_y = 0.45, pos_hint = {"center_x":0.5, "top":0.5})
 	dateInfoButtons = BoxLayout(size_hint_y = 0.05, pos_hint = {"center_x":0.5, "bottom":0})
 	mapViewer = RelativeLayout (size_hint = (0.7, 1), pos_hint = {"right": 1, "top": 1})
-	dateSelected = datetime.date.today()
+	geolocator = Nominatim()
+	
 	
 	def __init__(self, **kwargs):
 		self.size_hint_y = 0.8
@@ -342,6 +344,11 @@ class CalendarViewer(RelativeLayout):
 		self.selectedVenue = None
 		self.selectedContact = None
 		self.selectedOrganization = None
+		self.selectedDate = None
+		self.statePicked = False
+		self.cityPicked = False
+		self.venuePicked = False
+		self.locations = []
 		super(CalendarViewer, self).__init__(**kwargs)
 		
 		#Add the month viewer to the layout
@@ -399,7 +406,21 @@ class CalendarViewer(RelativeLayout):
 		#Add the day info viewer to the layout
 		self.dateManagerLayout.add_widget(self.dateInfoViewer)
 		self.dateNameLabel = Label(text = "Day Info", size_hint_y = 0.1, pos_hint = {"center_x": 0.5, "top": 1})
+		self.dateInfoVenueNameLabel = Label(text = "Venues:", size_hint = (0.25, 0.1), pos_hint = {"center_x": 0.5, "top": 0.9})
+		self.dateInfoVenueScrollView = ScrollView(size_hint = (1, 0.3), pos_hint = {"center_x": 0.5, "top": 0.8})
+		self.dateInfoVenueText = Label(size_hint = (1, None))
+		self.dateInfoVenueText.bind(width = lambda *x: self.dateInfoVenueText.setter("text_size")(self.dateInfoVenueText, (self.dateInfoVenueText.width, None)), texture_size = lambda *x: self.dateInfoVenueText.setter("height")(self.dateInfoVenueText, self.dateInfoVenueText.texture_size[1]))
+		self.dateInfoVenueScrollView.add_widget(self.dateInfoVenueText)
+		self.dateInfoContactNameLabel = Label(text = "Contacts:", size_hint = (0.25, 0.1), pos_hint = {"center_x": 0.5, "top": 0.5})
+		self.dateInfoContactScrollView = ScrollView(size_hint = (1, 0.3), pos_hint = {"center_x": 0.5, "top": 0.4})
+		self.dateInfoContactText = Label(size_hint = (1, None))
+		self.dateInfoContactText.bind(width = lambda *x: self.dateInfoContactText.setter("text_size")(self.dateInfoContactText, (self.dateInfoContactText.width, None)), texture_size = lambda *x: self.dateInfoContactText.setter("height")(self.dateInfoContactText, self.dateInfoContactText.texture_size[1]))
+		self.dateInfoContactScrollView.add_widget(self.dateInfoContactText)
 		self.dateInfoViewer.add_widget(self.dateNameLabel)
+		self.dateInfoViewer.add_widget(self.dateInfoVenueNameLabel)
+		self.dateInfoViewer.add_widget(self.dateInfoVenueScrollView)
+		self.dateInfoViewer.add_widget(self.dateInfoContactNameLabel)
+		self.dateInfoViewer.add_widget(self.dateInfoContactScrollView)
 		
 		self.dateManagerLayout.add_widget(self.dateInfoButtons)
 		self.newDateButton = Button(text = "New/Edit", size_hint_x = 0.33, on_press = self.addOrChangeDate)
@@ -437,24 +458,24 @@ class CalendarViewer(RelativeLayout):
 			if day.month < calendar.currentMonth:
 				if day.year <= calendar.currentYear:
 					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.1,0.1,0.1,1])
-					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.newButton.bind(on_release = self.dateSelector)
 					self.dateViewer.add_widget(self.dateViewer.newButton)
 				elif day.year > calendar.currentYear:
 					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.2,0.2,0.2,1])
-					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.newButton.bind(on_release = self.dateSelector)
 					self.dateViewer.add_widget(self.dateViewer.newButton)
 			elif day.month > calendar.currentMonth:
 				if day.year >= calendar.currentYear:
 					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.2,0.2,0.2,1])
-					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.newButton.bind(on_release = self.dateSelector)
 					self.dateViewer.add_widget(self.dateViewer.newButton)
 				elif day.year < calendar.currentYear:
 					self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0.1,0.1,0.1,1])
-					self.dateViewer.newButton.bind(on_press = self.dateSelector)
+					self.dateViewer.newButton.bind(on_release = self.dateSelector)
 					self.dateViewer.add_widget(self.dateViewer.newButton)
 			else:
 				self.dateViewer.newButton = Button(text = str(day.day), background_normal = "", background_color = [0,0.4,0.3,1])
-				self.dateViewer.newButton.bind(on_press = self.dateSelector)
+				self.dateViewer.newButton.bind(on_release = self.dateSelector)
 				self.dateViewer.add_widget(self.dateViewer.newButton)
 		
 	def incrementMonth(self,instance):
@@ -471,33 +492,206 @@ class CalendarViewer(RelativeLayout):
 		yearSelected = calendar.currentYear
 		if instance.background_color == [0,0.4,0.3,1]:
 			self.dateNameLabel.text = (str(monthSelected)+"/"+instance.text+"/"+str(yearSelected))
-			self.dateSelected = datetime.date(yearSelected, monthSelected, int(instance.text))
 		elif instance.background_color == [0.1,0.1,0.1,1]:
 			monthSelected -= 1
 			if monthSelected < 1:
 				monthSelected = 12
 				yearSelected -= 1
 			self.dateNameLabel.text = (str(monthSelected)+"/"+instance.text+"/"+str(yearSelected))
-			self.dateSelected = datetime.date(yearSelected, monthSelected, int(instance.text))
 		elif instance.background_color == [0.2,0.2,0.2,1]:
 			monthSelected += 1
 			if monthSelected > 12:
 				monthSelected = 1
 				yearSelected += 1
 			self.dateNameLabel.text = (str(monthSelected)+"/"+instance.text+"/"+str(yearSelected))
-			self.dateSelected = datetime.date(yearSelected, monthSelected, int(instance.text))
+		
+		if datacenter.linkValid is True:
+			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
+			self.dateInfoVenueText.text = ""
+			self.dateInfoContactText.text = ""
+			if dateFound is True:
+				self.selectedDate = datacenter.selectDate(self.dateNameLabel.text)
+				self.locations = []
+				locationIndex = 0
+				for venue in self.selectedDate.venues:
+					location = self.geolocator.geocode(venue.address+" "+venue.cityName+" "+venue.stateName)
+					self.locations.append(location)
+					print(location.address)
+					print(location.latitude, location.longitude)
+					if self.dateInfoVenueText.text == "":
+						self.dateInfoVenueText.text = venue.venueName
+					else:
+						self.dateInfoVenueText.text += (", "+venue.venueName)
+				for contact in self.selectedDate.contacts:
+					if self.dateInfoContactText.text == "":
+						self.dateInfoContactText.text = contact.name
+					else:
+						self.dateInfoContactText.text += (", "+contact.name)
+				for organization in self.selectedDate.organizations:
+					if self.dateInfoContactText.text == "":
+						self.dateInfoContactText.text = organization.organizationName
+					else:
+						self.dateInfoContactText.text += (", "+organization.organizationName)
+				
+				for location in self.locations:
+					if locationIndex == 0:
+						self.mapViewer.remove_widget(self.map)
+						self.map = MapView(lat = location.latitude, lon = location.longitude, zoom = 10)
+						self.mapViewer.add_widget(self.map)
+						locationIndex += 1
+					marker = MapMarker(lat = location.latitude, lon = location.longitude)
+					self.map.add_widget(marker)
+		
 			
 	#Add a date's info if it's not there, or edit it if it is
 	def addOrChangeDate(self, instance):
 		if self.dateNameLabel.text != "Day Info" and datacenter.linkValid is True:
 			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
+			
+			#Edit the given day
 			if dateFound is True:
-				popup = Popup(title = "Edit Date", size_hint = (0.8, 0.85))
-				popup.open()
+				self.selectedDate = datacenter.selectDate(self.dateNameLabel.text)
+				
+				#Create a popup with which to edit the day's associated info
+				self.popupLayout = RelativeLayout()
+				self.stateSpinner = Spinner(text = "State", size_hint = (0.2, 0.1), pos_hint = {"center_x": 0.4, "top": 1}, on_press = self.stateSelection)
+				self.citySpinner = Spinner(text = "City", size_hint = (0.2, 0.1), pos_hint = {"center_x": 0.6, "top": 1}, on_press = self.citySelection)
+				self.venueSpinner = Spinner(text = "Venue", size_hint = (0.3, 0.1), pos_hint = {"center_x": 0.2, "top": 0.875}, on_press = self.venueSelection)
+				self.addVenueButton = Button (text ="Add", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.38125, "top": 0.875}, on_press = self.addVenueToDate)
+				self.removeVenueButton = Button (text ="Rem", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.38125, "top": 0.825}, on_press = self.removeVenueFromDate)
+				self.contactSpinner = Spinner(text = "Contact", size_hint = (0.25, 0.1), pos_hint = {"center_x": 0.7625, "top": 0.875}, on_press = self.contactSelection)
+				self.addContactButton = Button (text = "Add", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.91875, "top": 0.875}, on_press = self.addContactToDate)
+				self.removeContactButton = Button (text = "Rem", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.91875, "top": 0.825}, on_press = self.removeContactFromDate)
+				self.individualRadio = CheckBox(size_hint = (0.05, 0.05), pos_hint = {"center_x": 0.6125, "top": 0.875})
+				self.individualRadio.active = True
+				self.individualRadio.group = "ContactSelection"
+				self.organizationRadio = CheckBox(size_hint = (0.05, 0.05), pos_hint = {"center_x": 0.6125, "top": 0.825})
+				self.organizationRadio.active = False
+				self.organizationRadio.group = "ContactSelection"
+				self.individualLabel = Label(text = "Individual:", size_hint = (0.2, 0.05), pos_hint = {"center_x": 0.5125, "top": 0.875})
+				self.organizationLabel = Label(text = "Organization:", size_hint = (0.2, 0.05), pos_hint = {"center_x": 0.5125, "top": 0.825})
+				self.noteLabel = Label(text = "Notes:", size_hint = (0.1, 0.05), pos_hint = {"center_x": 0.1, "top": 0.75})
+				self.noteInput = TextInput(size_hint = (0.7, 0.225), pos_hint = {"center_x": 0.6, "top": 0.75}, multiline = True)
+				self.noteInput.text = self.selectedDate.notes
+				self.currentVenuesLabel = Label(text = "Current Venues:", size_hint = (0.1, 0.05), pos_hint = {"center_x": 0.1, "top": 0.525})
+				self.currentVenuesScrollView = ScrollView(size_hint = (0.7, 0.225), pos_hint = {"center_x": 0.6, "top": 0.525})
+				self.currentVenuesText = Label(size_hint = (1, None))
+				self.currentVenuesText.bind(width = lambda *x: self.currentVenuesText.setter("text_size")(self.currentVenuesText, (self.currentVenuesText.width, None)), texture_size = lambda *x: self.currentVenuesText.setter("height")(self.currentVenuesText, self.currentVenuesText.texture_size[1]))
+				self.currentVenuesScrollView.add_widget(self.currentVenuesText)
+				self.relevantContactsLabel = Label(text = "Relevant Contacts:", size_hint = (0.1, 0.05), pos_hint = {"center_x": 0.1, "top": 0.3})
+				self.relevantContactsScrollView = ScrollView(size_hint = (0.7, 0.225), pos_hint = {"center_x": 0.6, "top": 0.3})
+				self.relevantContactsText = Label(size_hint = (1, None))
+				self.relevantContactsText.bind(width = lambda *x: self.relevantContactsText.setter("text_size")(self.relevantContactsText, (self.relevantContactsText.width, None)), texture_size = lambda *x: self.relevantContactsText.setter("height")(self.relevantContactsText, self.relevantContactsText.texture_size[1]))
+				self.relevantContactsScrollView.add_widget(self.relevantContactsText)
+				self.submitDateButton = Button(text = "Submit", size_hint = (0.2, 0.075), pos_hint = {"right": 0.8, "bottom": 0})
+				self.closeButton = Button(text = "Close", size_hint = (0.2, 0.075), pos_hint = {"right": 1, "bottom": 0})
+				self.popupLayout.add_widget(self.individualLabel)
+				self.popupLayout.add_widget(self.organizationLabel)
+				self.popupLayout.add_widget(self.noteLabel)
+				self.popupLayout.add_widget(self.currentVenuesLabel)
+				self.popupLayout.add_widget(self.relevantContactsLabel)
+				self.popupLayout.add_widget(self.addVenueButton)
+				self.popupLayout.add_widget(self.removeVenueButton)
+				self.popupLayout.add_widget(self.addContactButton)
+				self.popupLayout.add_widget(self.removeContactButton)
+				self.popupLayout.add_widget(self.submitDateButton)
+				self.popupLayout.add_widget(self.closeButton)
+				self.popupLayout.add_widget(self.noteInput)
+				self.popupLayout.add_widget(self.currentVenuesScrollView)
+				self.popupLayout.add_widget(self.relevantContactsScrollView)
+				self.popupLayout.add_widget(self.individualRadio)
+				self.popupLayout.add_widget(self.organizationRadio)
+				self.popupLayout.add_widget(self.stateSpinner)
+				self.popupLayout.add_widget(self.citySpinner)
+				self.popupLayout.add_widget(self.venueSpinner)
+				self.popupLayout.add_widget(self.contactSpinner)
+				
+				#Populate the popup's text boxes so that it contains all relevant data
+				for venue in self.selectedDate.venues:
+					print(venue.venueName)
+					if self.currentVenuesText.text == "":
+						self.currentVenuesText.text = venue.venueName
+					else:
+						self.currentVenuesText.text += (", "+venue.venueName)
+				for contact in self.selectedDate.contacts:
+					if self.relevantContactsText.text == "":
+						self.relevantContactsText.text = contact.name
+					else:
+						self.relevantContactsText.text += (", "+contact.name)
+				for organization in self.selectedDate.organizations:
+					if self.relevantContactsText.text == "":
+						self.relevantContactsText.text = organization.organizationName
+					else:
+						self.relevantContactsText.text += (", "+organization.organizationName)
+					
+				self.popup = Popup(title = "Edit Date", content = self.popupLayout, size_hint = (0.8, 0.85))
+				self.popup.open()
+				self.submitDateButton.bind(on_press = self.submitEditedDateData)
+				self.closeButton.bind(on_press = self.popup.dismiss)
+				
+			#If the day isn't found, add it
 			else: 
-				datacenter.addDate(self.dateNameLabel.text)
-				popup = Popup(title = "Add Date", size_hint = (0.8, 0.85))
-				popup.open()
+				#Add a new date to the database
+				self.selectedDate = dayinfo.DayInfo(self.dateNameLabel.text)
+				
+				#Create a popup with which to create the day's associated info
+				self.popupLayout = RelativeLayout()
+				self.stateSpinner = Spinner(text = "State", size_hint = (0.2, 0.1), pos_hint = {"center_x": 0.4, "top": 1}, on_press = self.stateSelection)
+				self.citySpinner = Spinner(text = "City", size_hint = (0.2, 0.1), pos_hint = {"center_x": 0.6, "top": 1}, on_press = self.citySelection)
+				self.venueSpinner = Spinner(text = "Venue", size_hint = (0.3, 0.1), pos_hint = {"center_x": 0.2, "top": 0.875}, on_press = self.venueSelection)
+				self.addVenueButton = Button (text ="Add", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.38125, "top": 0.875}, on_press = self.addVenueToDate)
+				self.removeVenueButton = Button (text ="Rem", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.38125, "top": 0.825}, on_press = self.removeVenueFromDate)
+				self.contactSpinner = Spinner(text = "Contact", size_hint = (0.25, 0.1), pos_hint = {"center_x": 0.7625, "top": 0.875}, on_press = self.contactSelection)
+				self.addContactButton = Button (text = "Add", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.91875, "top": 0.875}, on_press = self.addContactToDate)
+				self.removeContactButton = Button (text = "Rem", size_hint = (0.0625, 0.05), pos_hint = {"center_x": 0.91875, "top": 0.825}, on_press = self.removeContactFromDate)
+				self.individualRadio = CheckBox(size_hint = (0.05, 0.05), pos_hint = {"center_x": 0.6125, "top": 0.875})
+				self.individualRadio.active = True
+				self.individualRadio.group = "ContactSelection"
+				self.organizationRadio = CheckBox(size_hint = (0.05, 0.05), pos_hint = {"center_x": 0.6125, "top": 0.825})
+				self.organizationRadio.active = False
+				self.organizationRadio.group = "ContactSelection"
+				self.individualLabel = Label(text = "Individual:", size_hint = (0.2, 0.05), pos_hint = {"center_x": 0.5125, "top": 0.875})
+				self.organizationLabel = Label(text = "Organization:", size_hint = (0.2, 0.05), pos_hint = {"center_x": 0.5125, "top": 0.825})
+				self.noteLabel = Label(text = "Notes:", size_hint = (0.1, 0.05), pos_hint = {"center_x": 0.1, "top": 0.75})
+				self.noteInput = TextInput(text = "Insert notes here", size_hint = (0.7, 0.225), pos_hint = {"center_x": 0.6, "top": 0.75}, multiline = True)
+				self.currentVenuesLabel = Label(text = "Current Venues:", size_hint = (0.1, 0.05), pos_hint = {"center_x": 0.1, "top": 0.525})
+				self.currentVenuesScrollView = ScrollView(size_hint = (0.7, 0.225), pos_hint = {"center_x": 0.6, "top": 0.525})
+				self.currentVenuesText = Label(size_hint = (1, None))
+				self.currentVenuesText.bind(width = lambda *x: self.currentVenuesText.setter("text_size")(self.currentVenuesText, (self.currentVenuesText.width, None)), texture_size = lambda *x: self.currentVenuesText.setter("height")(self.currentVenuesText, self.currentVenuesText.texture_size[1]))
+				self.currentVenuesScrollView.add_widget(self.currentVenuesText)
+				self.relevantContactsLabel = Label(text = "Relevant Contacts:", size_hint = (0.1, 0.05), pos_hint = {"center_x": 0.1, "top": 0.3})
+				self.relevantContactsScrollView = ScrollView(size_hint = (0.7, 0.225), pos_hint = {"center_x": 0.6, "top": 0.3})
+				self.relevantContactsText = Label(size_hint = (1, None))
+				self.relevantContactsText.bind(width = lambda *x: self.relevantContactsText.setter("text_size")(self.relevantContactsText, (self.relevantContactsText.width, None)), texture_size = lambda *x: self.relevantContactsText.setter("height")(self.relevantContactsText, self.relevantContactsText.texture_size[1]))
+				self.relevantContactsScrollView.add_widget(self.relevantContactsText)
+				self.submitDateButton = Button(text = "Submit", size_hint = (0.2, 0.075), pos_hint = {"right": 0.8, "bottom": 0})
+				self.closeButton = Button(text = "Close", size_hint = (0.2, 0.075), pos_hint = {"right": 1, "bottom": 0})
+				self.popupLayout.add_widget(self.individualLabel)
+				self.popupLayout.add_widget(self.organizationLabel)
+				self.popupLayout.add_widget(self.noteLabel)
+				self.popupLayout.add_widget(self.currentVenuesLabel)
+				self.popupLayout.add_widget(self.relevantContactsLabel)
+				self.popupLayout.add_widget(self.addVenueButton)
+				self.popupLayout.add_widget(self.removeVenueButton)
+				self.popupLayout.add_widget(self.addContactButton)
+				self.popupLayout.add_widget(self.removeContactButton)
+				self.popupLayout.add_widget(self.submitDateButton)
+				self.popupLayout.add_widget(self.closeButton)
+				self.popupLayout.add_widget(self.noteInput)
+				self.popupLayout.add_widget(self.currentVenuesScrollView)
+				self.popupLayout.add_widget(self.relevantContactsScrollView)
+				self.popupLayout.add_widget(self.individualRadio)
+				self.popupLayout.add_widget(self.organizationRadio)
+				self.popupLayout.add_widget(self.stateSpinner)
+				self.popupLayout.add_widget(self.citySpinner)
+				self.popupLayout.add_widget(self.venueSpinner)
+				self.popupLayout.add_widget(self.contactSpinner)
+				
+				self.popup = Popup(title = "Add Date", content = self.popupLayout, size_hint = (0.8, 0.85))
+				self.popup.open()
+				self.submitDateButton.bind(on_press = self.submitDateData)
+				self.closeButton.bind(on_press = self.popup.dismiss)
+				
 		else:
 			popup = Popup(title = "Date not initialized", size_hint = (0.4, 0.45))
 			popup.open()
@@ -507,7 +701,7 @@ class CalendarViewer(RelativeLayout):
 		if self.dateNameLabel.text != "Day Info" and datacenter.linkValid is True:
 			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
 			if dateFound is True:
-				datacenter.removeDate(self.dateNameLabel.text)
+				datacenter.removeDateFromSpreadsheet(self.dateNameLabel.text)
 				popup = Popup(title = "Date Removed", size_hint = (0.4, 0.45))
 				popup.open()
 			else: 
@@ -522,14 +716,245 @@ class CalendarViewer(RelativeLayout):
 		if self.dateNameLabel.text != "Day Info" and datacenter.linkValid is True:
 			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
 			if dateFound is True:
-				popup = Popup(title = "Expanded Date", size_hint = (0.8, 0.85))
-				popup.open()
+				self.selectedDate = datacenter.selectDate(self.dateNameLabel.text)
+				self.expandedView = RelativeLayout()
+				#self.expandedScrollView = ScrollView(size_hint = (1, 0.9), pos_hint = {"center_x": 0.5, "top": 1})
+				#self.expandedText = Label(size_hint = (1, None))
+				#self.expandedText.bind(width = lambda *x: self.expandedText.setter("text_size")(self.expandedText, (self.expandedText.width, None)), texture_size = lambda *x: self.expandedText.setter("height")(self.expandedText, self.expandedText.texture_size[1]))
+				#self.expandedScrollView.add_widget(self.expandedText)
+				self.expandedText = TextInput(size_hint = (1, 0.9), pos_hint = {"center_x": 0.5, "top": 1}, multiline = True)
+				self.closeButton = Button(text = "Close", size_hint = (0.2, 0.075), pos_hint = {"right": 1, "bottom": 0})
+				#self.expandedView.add_widget(self.expandedScrollView)
+				self.expandedView.add_widget(self.expandedText)
+				self.expandedView.add_widget(self.closeButton)
+				
+				for venue in self.selectedDate.venues:
+					print(venue.venueName)
+					if self.expandedText.text == "":
+						self.expandedText.text = venue.venueName
+						self.expandedText.text += ("\n    "+venue.address+"\n    "+venue.cityName+", "+venue.stateName+" "+venue.zip+"\n    Phone: "+venue.phone+"    Email: "+venue.email+"\n    Links: "+venue.links+"\n    Associated Contacts: "+venue.contacts+"\nNotes:\n"+venue.notes)
+					else:
+						self.expandedText.text += ("\n\n"+venue.venueName)
+						self.expandedText.text += ("\n    "+venue.address+"\n    "+venue.cityName+", "+venue.stateName+" "+venue.zip+"\n    Phone: "+venue.phone+"    Email: "+venue.email+"\n    Links: "+venue.links+"\n    Associated Contacts: "+venue.contacts+"\nNotes:\n"+venue.notes)
+				for contact in self.selectedDate.contacts:
+					if self.expandedText.text == "":
+						self.expandedText.text = contact.name
+						self.expandedText.text += ("\n    "+contact.address+"\n    "+contact.cityName+", "+contact.stateName+" "+contact.zip+"\n    Phone: "+contact.phone+"    Email: "+contact.email+"\n    Links: "+contact.links+"\n    Associated Contacts: "+contact.associations+"\nNotes:\n"+contact.notes)
+					else:
+						self.expandedText.text += ("\n\n"+contact.name)
+						self.expandedText.text += ("\n    "+contact.address+"\n    "+contact.cityName+", "+contact.stateName+" "+contact.zip+"\n    Phone: "+contact.phone+"    Email: "+contact.email+"\n    Links: "+contact.links+"\n    Associated Contacts: "+contact.associations+"\nNotes:\n"+contact.notes)
+				for organization in self.selectedDate.organizations:
+					if self.expandedText.text == "":
+						self.expandedText.text = organization.organizationName
+						self.expandedText.text += ("\n    "+organization.address+"\n    "+organization.cityName+", "+organization.stateName+" "+organization.zip+"\n    Phone: "+organization.phone+"    Email: "+organization.email+"\n    Links: "+organization.links+"\n    Associated Contacts: "+organization.members+"\nNotes:\n"+organization.notes)
+					else:
+						self.expandedText.text += ("\n\n"+organization.organizationName)
+						self.expandedText.text += ("\n    "+organization.address+"\n    "+organization.cityName+", "+organization.stateName+" "+organization.zip+"\n    Phone: "+organization.phone+"    Email: "+organization.email+"\n    Links: "+organization.links+"\n    Associated Contacts: "+organization.members+"\nNotes:\n"+organization.notes)
+				
+				self.popup = Popup(title = "Expanded Date", content = self.expandedView, size_hint = (0.8, 0.85))
+				self.popup.open()
+				self.closeButton.bind(on_press = self.popup.dismiss)
 			else: 
 				popup = Popup(title = "Date Not Found", size_hint = (0.4, 0.45))
 				popup.open()
 		else:
 			popup = Popup(title = "Date Not Initialized", size_hint = (0.4, 0.45))
 			popup.open()
+	
+	#Add the selected venue or contact on button press
+	def addVenueToDate(self, instance):
+		if len(self.venueSpinner.values) > 0:
+			self.selectedVenue = self.selectedCity.selectVenue(self.venueSpinner.text)
+			self.selectedDate.addVenue(self.selectedVenue)
+			self.currentVenuesText.text = ""
+			for venue in self.selectedDate.venues:
+				if self.currentVenuesText.text == "":
+					self.currentVenuesText.text = venue.venueName
+				else:
+					self.currentVenuesText.text += (", "+venue.venueName)
+	
+	def addContactToDate(self, instance):
+		if self.individualRadio.active == True and len(self.contactSpinner.values) > 0:
+			self.selectedContact = self.selectedCity.selectContact(self.contactSpinner.text)
+			self.selectedDate.addContact(self.selectedContact)
+			self.relevantContactsText.text = ""
+			for contact in self.selectedDate.contacts:
+				if self.relevantContactsText.text == "":
+					print("Accessed this field")
+					print(contact.name)
+					print("End field")
+					self.relevantContactsText.text = contact.name
+				else:
+					self.relevantContactsText.text += (", "+contact.name)
+			for organization in self.selectedDate.organizations:
+				if self.relevantContactsText.text == "":
+					self.relevantContactsText.text = organization.organizationName
+				else:
+					self.relevantContactsText.text += (", "+organization.organizationName)
+		elif self.organizationRadio.active == True and len(self.contactSpinner.values) > 0:
+			self.selectedOrganization = self.selectedCity.selectOrganization(self.contactSpinner.text)
+			self.selectedDate.addOrganization(self.selectedOrganization)
+			self.relevantContactsText.text = ""
+			for contact in self.selectedDate.contacts:
+				if self.relevantContactsText.text == "":
+					self.relevantContactsText.text = contact.name
+				else:
+					self.relevantContactsText.text += (", "+contact.name)
+			for organization in self.selectedDate.organizations:
+				if self.relevantContactsText.text == "":
+					self.relevantContactsText.text = organization.organizationName
+				else:
+					self.relevantContactsText.text += (", "+organization.organizationName)
+				
+	#Likewise, remove selected venue or contact on button press			
+	def removeVenueFromDate(self, instance):
+		if len(self.venueSpinner.values) > 0:
+			self.selectedVenue = self.selectedCity.selectVenue(self.venueSpinner.text)
+			if self.selectedVenue.venueName in self.selectedDate.venueNames:
+				#While the name might be correct and within selectedDate, the selectedContact object is not actually within selectedDate
+				#Ergo, this points to the object actually stored within selectedDate
+				self.selectedVenue = self.selectedDate.selectVenue(self.selectedVenue.venueName)
+				self.selectedDate.removeVenue(self.selectedVenue)
+				self.currentVenuesText.text = ""
+				for venue in self.selectedDate.venues:
+					if self.currentVenuesText.text == "":
+						self.currentVenuesText.text = venue.venueName
+					else:
+						self.currentVenuesText.text += (", "+venue.venueName)
+	
+	def removeContactFromDate(self, instance):
+		if self.individualRadio.active == True and len(self.contactSpinner.values) > 0:
+			self.selectedContact = self.selectedCity.selectContact(self.contactSpinner.text)
+			if self.selectedContact.name in self.selectedDate.contactNames:
+				#While the name might be correct and within selectedDate, the selectedContact object is not actually within selectedDate
+				#Ergo, this points to the object actually stored within selectedDate
+				self.selectedContact = self.selectedDate.selectContact(self.selectedContact.name)
+				print(self.selectedContact.name)
+				self.selectedDate.removeContact(self.selectedContact)
+				print(self.selectedDate.contactNames)
+				self.relevantContactsText.text = ""
+				for contact in self.selectedDate.contacts:
+					if self.relevantContactsText.text == "":
+						self.relevantContactsText.text = contact.name
+					else:
+						self.relevantContactsText.text += (", "+contact.name)
+				for organization in self.selectedDate.organizations:
+					if self.relevantContactsText.text == "":
+						self.relevantContactsText.text = organization.organizationName
+					else:
+						self.relevantContactsText.text += (", "+organization.organizationName)
+		elif self.organizationRadio.active == True and len(self.contactSpinner.values) > 0:
+			self.selectedOrganization = self.selectedCity.selectOrganization(self.contactSpinner.text)
+			print(self.selectedOrganization.organizationName)
+			print(self.selectedDate.organizationNames)
+			if self.selectedOrganization.organizationName in self.selectedDate.organizationNames:
+				self.selectedOrganization = self.selectedDate.selectOrganization(self.selectedOrganization.organizationName)
+				print(self.selectedOrganization.organizationName)
+				self.selectedDate.removeOrganization(self.selectedOrganization)
+				print(self.selectedDate.organizationNames)
+				for contact in self.selectedDate.contacts:
+					if self.relevantContactsText.text == "":
+						self.relevantContactsText.text = self.selectedContact.name
+					else:
+						self.relevantContactsText.text += (", "+self.selectedContact.name)
+				for organization in self.selectedDate.organizations:
+					if self.relevantContactsText.text == "":
+						self.relevantContactsText.text = self.selectedOrganization.organizationName
+					else:
+						self.relevantContactsText.text += (", "+self.selectedOrganization.organizationName)
+			
+	def submitDateData(self, instance):
+		if self.noteInput.text != "":
+			self.selectedDate.notes = self.noteInput.text
+		else:
+			self.selectedDate.notes = "No notes given."
+		datacenter.addDateToSpreadsheet(self.dateNameLabel.text)
+		datacenter.submitDate(self.selectedDate)
+		
+		popupContent = RelativeLayout()
+		popupLabel = Label(text = "Date submission was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+		popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+		popupContent.add_widget(popupLabel)
+		popupContent.add_widget(popupClose)
+		popup = Popup(title = "Submission Successful", content = popupContent, size_hint = (0.85, 0.4))
+		popup.open()
+		popupClose.bind(on_press = popup.dismiss)
+		
+	def submitEditedDateData(self, instance):
+		if self.noteInput.text != "":
+			self.selectedDate.notes = self.noteInput.text
+		else:
+			self.selectedDate.notes = "No notes given."
+		datacenter.submitEditedDate(self.selectedDate)
+		
+		popupContent = RelativeLayout()
+		popupLabel = Label(text = "Date edit was successful!", size_hint_y = 0.3, pos_hint = {"center_x": 0.5, "top": 0.75})
+		popupClose = Button(text = "Close", size_hint = (0.5, 0.3), pos_hint = {"center_x": 0.5, "bottom": 0.25})
+		popupContent.add_widget(popupLabel)
+		popupContent.add_widget(popupClose)
+		popup = Popup(title = "Edit Successful", content = popupContent, size_hint = (0.85, 0.4))
+		popup.open()
+		popupClose.bind(on_press = popup.dismiss)
+		
+	#Populate the spinners on click if the link to the database is valid and set up error catching
+	def stateSelection(self, instance):
+		self.cityPicked = False
+		print(self.stateSpinner.text)
+		if datacenter.linkValid is True:
+			datacenter.stateNames.sort()
+			self.stateSpinner.values = datacenter.stateNames
+			self.statePicked = True
+			self.citySpinner.values = []
+			self.citySpinner.text = "City"
+			self.venueSpinner.values = []
+			self.venueSpinner.text = "Venue"
+			self.contactSpinner.values = []
+			self.contactSpinner.text = "Contact"
+	
+	def citySelection(self, instance): 
+		print(self.citySpinner.text)
+		if datacenter.linkValid is True:
+			if self.statePicked is True:
+				if self.stateSpinner.text in datacenter.stateNames:
+					self.selectedState = datacenter.selectState(self.stateSpinner.text)
+					self.selectedState.cityNames.sort()
+					self.citySpinner.values = self.selectedState.cityNames
+					self.cityPicked = True
+					self.venueSpinner.values = []
+					self.venueSpinner.text = "Venue"
+					self.contactSpinner.values = []
+					self.contactSpinner.text = "Contact"
+	
+	def venueSelection(self, instance):
+		print(self.venueSpinner.text)
+		if self.cityPicked is True:
+			if datacenter.linkValid is True:
+				if self.citySpinner.text in self.selectedState.cityNames:
+					self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+					if self.selectedCity.cityName in self.selectedState.cityNames and len(self.selectedCity.venueNames) > 0:
+						self.selectedCity.venueNames.sort()
+						self.venueSpinner.values = self.selectedCity.venueNames
+	
+	def contactSelection(self, instance):
+		self.contactSpinner.values = []
+		self.contactSpinner.text = "Contact"
+		print(self.contactSpinner.text)
+		if self.individualRadio.active == True:
+			if self.cityPicked is True:
+				if datacenter.linkValid is True:
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.selectedCity.cityName in self.selectedState.cityNames and len(self.selectedCity.contactNames) > 0:
+							self.selectedCity.contactNames.sort()
+							self.contactSpinner.values = self.selectedCity.contactNames
+		elif self.organizationRadio.active == True:
+			if self.cityPicked is True:
+				if datacenter.linkValid is True:
+					if self.citySpinner.text in self.selectedState.cityNames:
+						self.selectedCity = self.selectedState.selectCity(self.citySpinner.text)
+						if self.selectedCity.cityName in self.selectedState.cityNames and len(self.selectedCity.organizationNames) > 0:
+							self.selectedCity.organizationNames.sort()
+							self.contactSpinner.values = self.selectedCity.organizationNames
 			
 			
 
@@ -1582,8 +2007,8 @@ class DatabaseViewer(RelativeLayout):
 						if self.venueSpinner.text in self.selectedCity.venueNames:
 							self.selectedVenue = self.selectedCity.selectVenue(self.venueSpinner.text)
 							self.venueNameText.text = self.selectedVenue.venueName
-							self.stateVenueNameText.text = self.selectedState.stateName
-							self.cityVenueNameText.text = self.selectedCity.cityName
+							self.stateVenueNameText.text = self.selectedVenue.stateName
+							self.cityVenueNameText.text = self.selectedVenue.cityName
 							self.addressVenueNameText.text = self.selectedVenue.address
 							self.zipVenueNameText.text = self.selectedVenue.zip
 							self.phoneVenueNameText.text = self.selectedVenue.phone
@@ -1666,6 +2091,7 @@ class DatabaseManagementDatabaseLinkView(BoxLayout):
 			if linkSegments[2] == "docs.google.com" and linkSegments[3] == "spreadsheets":
 				datacenter.spreadsheetId = linkSegments[5]
 				datacenter.linkValid = True
+				datacenter.databaseConnect(credentials)	
 				popup = Popup(title = "Link Established", content = (Label(text = "Link to Google Sheets successfully established!")), size_hint = (0.85, 0.4))
 				popup.open()
 			else:
@@ -1675,7 +2101,7 @@ class DatabaseManagementDatabaseLinkView(BoxLayout):
 			popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
 			popup.open()
 			
-		datacenter.databaseConnect(credentials)	
+		
 		self.generalLayout.databaseText.text = ""
 		
 		
@@ -1706,6 +2132,7 @@ class CalendarDatabaseLinkView(BoxLayout):
 			if linkSegments[2] == "docs.google.com" and linkSegments[3] == "spreadsheets":
 				datacenter.spreadsheetId = linkSegments[5]
 				datacenter.linkValid = True
+				datacenter.databaseConnect(credentials)	
 				popup = Popup(title = "Link Established", content = (Label(text = "Link to Google Sheets successfully established!")), size_hint = (0.85, 0.4))
 				popup.open()
 			else:
@@ -1715,7 +2142,7 @@ class CalendarDatabaseLinkView(BoxLayout):
 			popup = Popup(title = "Invalid Link", content = (Label(text = "The link you provided is invalid.  Check to make sure it's the right link.")), size_hint = (0.85, 0.4))
 			popup.open()
 			
-		datacenter.databaseConnect(credentials)	
+		
 		self.generalLayout.databaseText.text = ""
 	
 	
