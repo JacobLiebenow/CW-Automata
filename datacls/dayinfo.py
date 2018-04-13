@@ -18,8 +18,9 @@ class DayInfo:
 
 	stateNamePointer = ""
 	
-	def __init__(self, dateName, venues = None, venueNames = None, contacts = None, contactNames = None, organizations = None, organizationName = None):
+	def __init__(self, dateName, venues = None, venueNames = None, contacts = None, contactNames = None, organizations = None, organizationNames = None):
 		self.dateName = dateName
+		self.notes = "No notes given."
 		
 		if venues is None:
 			self.venues = []
@@ -29,12 +30,7 @@ class DayInfo:
 		if venueNames is None:
 			self.venueNames = []
 		else:
-			self.venueNames = venueNames
-			
-		# if coordinates is None:
-			# self.coordinates = []
-		# else:
-			# self.coordinates = coordinates	
+			self.venueNames = venueNames	
 			
 		if contacts is None:
 			self.contacts = []
@@ -64,26 +60,26 @@ class DayInfo:
 	#These objects will be sourced from datacenter
 			
 	#Add venues, contacts, and organizations based off of the datacenter object
-	def addVenue(self, state, city, venue):
+	def addVenue(self, venue):
 		if venue not in self.venues:
 			self.venues.append(venue)
 			self.venueNames.append(venue.venueName)
 		else: 
-			print("Venue by the name of '",venue.venueName,"' not found.  Check spelling or if the venue was in the database.")
+			print("Venue by the name of '"+venue.venueName+"' already in date!")
 			
 	def addContact(self, contact):
 		if contact not in self.contacts:
 			self.contacts.append(contact)
 			self.contactNames.append(contact.name)
 		else: 
-			print("Organization by the name of '",contact.name,"' not found.  Check spelling or if the organization was in the database.")
+			print("Contact by the name of '"+contact.name+"' already in date!")
 			
 	def addOrganization(self, organization):
 		if organization not in self.organizations:
 			self.organizations.append(organization)
 			self.organizationNames.append(organization.organizationName)
 		else: 
-			print("Organization by the name of '",organization.organizationName,"' not found.  Check spelling or if the organization was in the database.")
+			print("Organization by the name of '"+organization.organizationName+"' already in date!")
 	
 	
 	#Remove a selected venue, contact, or organization		
