@@ -198,3 +198,6 @@ CHANGELOG:
   -Added geolocation services via Nominatim
   -Added expanded view for date
   -Reworked data classes, namely providing references to states and cities within venues, contacts, and organizations
+  
+4/16/2018
+  -Moved Kivy Garden Mapview files to own file because of dependency issues in packaging
