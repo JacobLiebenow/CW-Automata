@@ -34,8 +34,8 @@ from kivy.uix.scrollview import ScrollView
 from kivy.config import Config
 
 #Import MapView
-from kivy.garden.mapview import MapView
-from kivy.garden.mapview import MapMarker
+from mapview import MapView
+from mapview import MapMarker
 
 #Import geopy
 from geopy.geocoders import Nominatim
@@ -56,8 +56,6 @@ Config.set("input", "mouse", "mouse,multitouch_on_demand")
 
 kivy.require('1.9.0')
 Builder.load_string("""
-#: import MapSouce mapview.MapSource
-
 <ScreenMainMenu>:
 	orientation: "vertical"
 	padding: 40
