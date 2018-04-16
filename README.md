@@ -20,7 +20,11 @@ https://docs.google.com/document/d/e/2PACX-1vRRTL24F-NTx2ifTl2tOZdD7NNcleRxPdqHT
 This app is not well optimized at the moment, however it is fully functional.  There are plans to optimize and improve the looks of the app in the near future.  Please feel free to contact me with any suggestions!
 
 DEPENDENCIES:
+
   -Python 3.5.2: https://www.python.org/downloads/
+  
   -Kivy 1.10.0: https://kivy.org/docs/installation/installation.html
+  
   -Geopy 1.13.0: https://pypi.org/project/geopy/
+  
   -Google API Client (most recent): https://developers.google.com/api-client-library/python/apis/sheets/v4
