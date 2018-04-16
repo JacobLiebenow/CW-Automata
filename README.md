@@ -2,7 +2,7 @@
 
 CURRENT VERSION: Alpha 0.1
 
-WINDOWS DOWNLOAD: https://sourceforge.net/projects/waves-in-motion/files/?source=navbar
+DOWNLOAD: https://sourceforge.net/projects/waves-in-motion/files/?source=navbar
 
 This app is designed to be an open-source "One Stop Shop" for organization contact management and day planning.  It utilizes Google Sheets to store and manage contact information and notes about them, and is particularly well-suited for bands and other similar art groups.  It also allows for a user to add venues and contacts to a day via the UI, and automatically plots venue locations on a map for visual aid.  
 
