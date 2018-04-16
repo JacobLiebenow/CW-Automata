@@ -27,4 +27,4 @@ DEPENDENCIES:
   
   -Geopy 1.13.0: https://pypi.org/project/geopy/
   
-  -Google API Client (most recent): https://developers.google.com/api-client-library/python/apis/sheets/v4
+  -Google API Client v4: https://developers.google.com/api-client-library/python/apis/sheets/v4
