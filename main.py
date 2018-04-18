@@ -1,5 +1,5 @@
 #Written by: Jacob S Liebenow
-#Version: 0.1
+#Version: 0.2
 #Stage: Alpha
 #
 #
@@ -42,6 +42,8 @@ from geopy.geocoders import Nominatim
 
 #Import Calendar classes
 import datetime
+import sys
+import codecs
 
 #Import custom classes
 from datacls import state
@@ -508,14 +510,19 @@ class CalendarViewer(RelativeLayout):
 			self.dateInfoVenueText.text = ""
 			self.dateInfoContactText.text = ""
 			if dateFound is True:
+				population = datacenter.populateDate(self.dateNameLabel.text)
 				self.selectedDate = datacenter.selectDate(self.dateNameLabel.text)
 				self.locations = []
 				locationIndex = 0
 				for venue in self.selectedDate.venues:
-					location = self.geolocator.geocode(venue.address+" "+venue.cityName+" "+venue.stateName)
-					self.locations.append(location)
-					print(location.address)
-					print(location.latitude, location.longitude)
+					if venue.address != "N/A" and venue.cityName != "N/A" and venue.stateName != "N/A":
+						location = self.geolocator.geocode(venue.address+" "+venue.cityName+" "+venue.stateName)
+						if location is not None:
+							self.locations.append(location)
+						else:
+							popupLabel = Label(text = "Address added has an illegal character.\n\n\nLocation not shown on map, but still accessible in expanded view.")
+							popup = Popup(title = "Address Not Plotted", content = popupLabel, size_hint = (0.7, 0.45))
+							popup.open()
 					if self.dateInfoVenueText.text == "":
 						self.dateInfoVenueText.text = venue.venueName
 					else:
@@ -548,6 +555,7 @@ class CalendarViewer(RelativeLayout):
 			
 			#Edit the given day
 			if dateFound is True:
+				population = datacenter.populateDate(self.dateNameLabel.text)
 				self.selectedDate = datacenter.selectDate(self.dateNameLabel.text)
 				
 				#Create a popup with which to edit the day's associated info
@@ -714,6 +722,7 @@ class CalendarViewer(RelativeLayout):
 		if self.dateNameLabel.text != "Day Info" and datacenter.linkValid is True:
 			dateFound = datacenter.dateFinder(self.dateNameLabel.text)
 			if dateFound is True:
+				population = datacenter.populateDate(self.dateNameLabel.text)
 				self.selectedDate = datacenter.selectDate(self.dateNameLabel.text)
 				self.expandedView = RelativeLayout()
 				#self.expandedScrollView = ScrollView(size_hint = (1, 0.9), pos_hint = {"center_x": 0.5, "top": 1})
