@@ -202,6 +202,6 @@ CHANGELOG:
 4/16/2018
   -Moved Kivy Garden Mapview files to own file because of dependency issues in packaging
 
-4/18/2018
+4/18/2018 (UPDATED TO Alpha 0.2)
   -Substantially reduced the number of Google Sheet requests on link validation by only loading dates as selected
   -Added error catch in the case of an unknown character being added to a venue address
