@@ -20,6 +20,7 @@ from datacls import organization
 
 import httplib2
 import os
+import codecs
 
 from apiclient import discovery
 from oauth2client import client
@@ -192,19 +193,28 @@ class Datacenter:
 			
 	
 	def submitVenueDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
-		print("****************")
-		print(submittedState)
-		print(submittedCity)
-		print(submittedName)
-		print(submittedAddress)
-		print(submittedZip)
-		print(submittedPhone)
-		print(submittedLinks)
-		print(submittedContacts)
-		print(submittedEmail)
-		print(submittedNotes)
-		print("****************")
 		
+		if submittedState == "":
+			submittedState = "N/A"
+		if submittedCity == "":
+			submittedCity = "N/A"
+		if submittedName == "":
+			submittedName = "N/A"
+		if submittedAddress == "":
+			submittedAddress = "N/A"
+		if submittedZip == "":
+			submittedZip = "N/A"
+		if submittedPhone == "":
+			submittedPhone = "N/A"
+		if submittedLinks == "":
+			submittedLinks = "N/A"
+		if submittedContacts == "":
+			submittedContacts = "N/A"
+		if submittedEmail == "":
+			submittedEmail = "N/A"
+		if submittedNotes == "":
+			submittedNotes = "N/A"
+			
 		#Submit all relevant data to the google sheet
 		rangeName = "Venues!A1:J1"
 		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes]]
@@ -288,20 +298,28 @@ class Datacenter:
 		population = self.populate()
 		
 	def submitEditedVenueDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes, range):
-		print("****************")
-		print(range)
-		print(submittedState)
-		print(submittedCity)
-		print(submittedName)
-		print(submittedAddress)
-		print(submittedZip)
-		print(submittedPhone)
-		print(submittedLinks)
-		print(submittedContacts)
-		print(submittedEmail)
-		print(submittedNotes)
-		print("****************")
 		
+		if submittedState == "":
+			submittedState = "N/A"
+		if submittedCity == "":
+			submittedCity = "N/A"
+		if submittedName == "":
+			submittedName = "N/A"
+		if submittedAddress == "":
+			submittedAddress = "N/A"
+		if submittedZip == "":
+			submittedZip = "N/A"
+		if submittedPhone == "":
+			submittedPhone = "N/A"
+		if submittedLinks == "":
+			submittedLinks = "N/A"
+		if submittedContacts == "":
+			submittedContacts = "N/A"
+		if submittedEmail == "":
+			submittedEmail = "N/A"
+		if submittedNotes == "":
+			submittedNotes = "N/A"
+			
 		#Submit all relevant data to the google sheet
 		rangeName = range
 		values = [[submittedName, submittedState, submittedCity, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes]]
@@ -391,18 +409,27 @@ class Datacenter:
 		population = self.populate()
 		
 	def submitIndividualDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
-		print("****************")
-		print(submittedState)
-		print(submittedCity)
-		print(submittedName)
-		print(submittedAddress)
-		print(submittedZip)
-		print(submittedPhone)
-		print(submittedLinks)
-		print(submittedContacts)
-		print(submittedEmail)
-		print(submittedNotes)
-		print("****************")
+		
+		if submittedState == "":
+			submittedState = "N/A"
+		if submittedCity == "":
+			submittedCity = "N/A"
+		if submittedName == "":
+			submittedName = "N/A"
+		if submittedAddress == "":
+			submittedAddress = "N/A"
+		if submittedZip == "":
+			submittedZip = "N/A"
+		if submittedPhone == "":
+			submittedPhone = "N/A"
+		if submittedLinks == "":
+			submittedLinks = "N/A"
+		if submittedContacts == "":
+			submittedContacts = "N/A"
+		if submittedEmail == "":
+			submittedEmail = "N/A"
+		if submittedNotes == "":
+			submittedNotes = "N/A"
 		
 		#Submit all relevant data to the google sheet
 		rangeName = "Individual Contacts!A1:J1"
@@ -487,19 +514,27 @@ class Datacenter:
 		population = self.populate()
 		
 	def submitEditedIndividualDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes, range):
-		print("****************")
-		print(range)
-		print(submittedState)
-		print(submittedCity)
-		print(submittedName)
-		print(submittedAddress)
-		print(submittedZip)
-		print(submittedPhone)
-		print(submittedLinks)
-		print(submittedContacts)
-		print(submittedEmail)
-		print(submittedNotes)
-		print("****************")
+		
+		if submittedState == "":
+			submittedState = "N/A"
+		if submittedCity == "":
+			submittedCity = "N/A"
+		if submittedName == "":
+			submittedName = "N/A"
+		if submittedAddress == "":
+			submittedAddress = "N/A"
+		if submittedZip == "":
+			submittedZip = "N/A"
+		if submittedPhone == "":
+			submittedPhone = "N/A"
+		if submittedLinks == "":
+			submittedLinks = "N/A"
+		if submittedContacts == "":
+			submittedContacts = "N/A"
+		if submittedEmail == "":
+			submittedEmail = "N/A"
+		if submittedNotes == "":
+			submittedNotes = "N/A"
 		
 		#Submit all relevant data to the google sheet
 		rangeName = range
@@ -590,18 +625,27 @@ class Datacenter:
 		population = self.populate()
 		
 	def submitOrganizationDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
-		print("****************")
-		print(submittedState)
-		print(submittedCity)
-		print(submittedName)
-		print(submittedAddress)
-		print(submittedZip)
-		print(submittedPhone)
-		print(submittedLinks)
-		print(submittedContacts)
-		print(submittedEmail)
-		print(submittedNotes)
-		print("****************")
+		
+		if submittedState == "":
+			submittedState = "N/A"
+		if submittedCity == "":
+			submittedCity = "N/A"
+		if submittedName == "":
+			submittedName = "N/A"
+		if submittedAddress == "":
+			submittedAddress = "N/A"
+		if submittedZip == "":
+			submittedZip = "N/A"
+		if submittedPhone == "":
+			submittedPhone = "N/A"
+		if submittedLinks == "":
+			submittedLinks = "N/A"
+		if submittedContacts == "":
+			submittedContacts = "N/A"
+		if submittedEmail == "":
+			submittedEmail = "N/A"
+		if submittedNotes == "":
+			submittedNotes = "N/A"
 		
 		#Submit all relevant data to the google sheet
 		rangeName = "Organizational Contacts!A1:J1"
@@ -687,19 +731,27 @@ class Datacenter:
 			
 			
 	def submitEditedOrganizationDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes, range):
-		print("****************")
-		print(range)
-		print(submittedState)
-		print(submittedCity)
-		print(submittedName)
-		print(submittedAddress)
-		print(submittedZip)
-		print(submittedPhone)
-		print(submittedLinks)
-		print(submittedContacts)
-		print(submittedEmail)
-		print(submittedNotes)
-		print("****************")
+		
+		if submittedState == "":
+			submittedState = "N/A"
+		if submittedCity == "":
+			submittedCity = "N/A"
+		if submittedName == "":
+			submittedName = "N/A"
+		if submittedAddress == "":
+			submittedAddress = "N/A"
+		if submittedZip == "":
+			submittedZip = "N/A"
+		if submittedPhone == "":
+			submittedPhone = "N/A"
+		if submittedLinks == "":
+			submittedLinks = "N/A"
+		if submittedContacts == "":
+			submittedContacts = "N/A"
+		if submittedEmail == "":
+			submittedEmail = "N/A"
+		if submittedNotes == "":
+			submittedNotes = "N/A"
 		
 		#Submit all relevant data to the google sheet
 		rangeName = range
@@ -1142,12 +1194,10 @@ class Datacenter:
 		self.venueGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=rangeName).execute()
 		#print(self.venueGrouping)
 		self.values = self.venueGrouping.get('values', [])
-		print(self.values)
 		if not self.values:
 			print("No values found, spreadsheet empty")
 		else:
 			for row in self.values:
-				#print(row[1])
 				if row[1] not in self.stateNames:
 					newState = state.State(row[1])
 					newCity = city.City(row[2])
@@ -1246,20 +1296,51 @@ class Datacenter:
 						
 		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
 		self.sheets = self.sheetMetadata.get("sheets", "")
-		print(self.sheets)
 		for sheet in self.sheets:
 			self.title = sheet.get("properties", {}).get("title", "someTitle")
 			
 			if self.title == "Venues" or self.title == "Individual Contacts" or self.title == "Organizational Contacts":
 				print("Initial sheet detected.  Continuing...")
 			else:
+				self.dateNames.append(self.title)
+				
+				#This subroutine needs to be called ONLY on date selection, and whether or not a date exists should be called from dateNames
+				# dateRange = self.title+"!A1:L"
+				# self.dateGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=dateRange).execute()
+				# dateValues = self.dateGrouping.get("values", [])
+				# newDate = dayinfo.DayInfo(self.title)
+				# for row in dateValues:
+					# if row[0] != "":
+						# newDate.notes = row[0]
+					# elif row[1] != "":
+						# if row[1] == "Venue":
+							# newVenue = venue.Venue(row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+							# newDate.addVenue(newVenue)
+						# elif row[1] == "Individual":
+							# newContact = contact.Contact(row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+							# newDate.addContact(newContact)
+						# elif row[1] == "Organization":
+							# newOrganization = organization.Organization(row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+							# newDate.addOrganization(newOrganization)
+				# self.addDate(newDate)
+				
+				
+		return "Self"
+	
+	#This is used to grab data only as necessary from google sheets, thereby reducing the number of overall request calls
+	def populateDate(self, dateName):
+		self.dates = []
+		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
+		self.sheets = self.sheetMetadata.get("sheets", "")
+		
+		for sheet in self.sheets:
+			self.title = sheet.get("properties", {}).get("title", "someTitle")
+			if self.title == dateName:
 				dateRange = self.title+"!A1:L"
 				self.dateGrouping = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheetId, range=dateRange).execute()
 				dateValues = self.dateGrouping.get("values", [])
-				print(dateValues)
 				newDate = dayinfo.DayInfo(self.title)
 				for row in dateValues:
-					print(row)
 					if row[0] != "":
 						newDate.notes = row[0]
 					elif row[1] != "":
@@ -1273,9 +1354,7 @@ class Datacenter:
 							newOrganization = organization.Organization(row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
 							newDate.addOrganization(newOrganization)
 				self.addDate(newDate)
-				self.dateNames.append(newDate.dateName)
-				
-				
+		
 		return "Self"
 	
 	def dateFinder(self, dateName):
@@ -1411,6 +1490,7 @@ class Datacenter:
 	def addDate(self, date):
 		if date not in self.dates:
 			self.dates.append(date)
+			#This is where the dates need to be called from google sheets.  The actual, physical dates aren't needed anywhere else.
 		
 	def removeDate(self, date):
 		if date in self.dates:
