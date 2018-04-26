@@ -112,7 +112,13 @@ class Datacenter:
 		store = Storage(self.credential_path)
 		self.credentials = store.get()
 		if not self.credentials or self.credentials.invalid:
-			flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+			#flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+			constructor_kwargs = {
+                'redirect_uri': ["urn:ietf:wg:oauth:2.0:oob","http://localhost"],
+                'auth_uri': "https://accounts.google.com/o/oauth2/auth",
+                'token_uri': "https://accounts.google.com/o/oauth2/token",
+            }
+			flow = client.OAuth2WebServerFlow("181019670663-4tqat2a6ojf4k1v8ac2a943p06hr8tu5.apps.googleusercontent.com", "avagdlQNxR-BsXck7bTst0J6", SCOPES, **constructor_kwargs)
 			flow.user_agent = APPLICATION_NAME
 			if flags:
 				self.credentials = tools.run_flow(flow, store, flags)
