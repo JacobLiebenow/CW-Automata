@@ -1,6 +1,6 @@
 # Waves In Motion
 
-CURRENT VERSION: Alpha 0.2
+CURRENT VERSION: Alpha 0.2.1
 
 DOWNLOAD: https://sourceforge.net/projects/waves-in-motion/files/?source=navbar
 
