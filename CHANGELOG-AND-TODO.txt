@@ -205,3 +205,7 @@ CHANGELOG:
 4/18/2018 (UPDATED TO Alpha 0.2)
   -Substantially reduced the number of Google Sheet requests on link validation by only loading dates as selected
   -Added error catch in the case of an unknown character being added to a venue address
+
+4/26/2018 (UPDATED TO Alpha 0.2.1)
+  -Because of an issue with packaging combined with issues with Google's oauth2 files, wrote a workaround for the 
+  client_secret.json file in datacenter.py, hardcoding in the data to obtain credentials
