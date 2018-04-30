@@ -141,18 +141,18 @@ class Datacenter:
 		#Set up the database, if necessary
 		self.sheetMetadata = self.service.spreadsheets().get(spreadsheetId = self.spreadsheetId).execute()
 		self.sheets = self.sheetMetadata.get("sheets", "")
-		self.title = self.sheets[0].get("properties", {}).get("title", "someTitle")
-		population = self.populate()
+		self.title = self.sheets[0].get("properties", {}).get("title", "")
 		
 		#Initialize the sheet setup from a fresh spreadsheet
-		if self.title == "Sheet1" and len(self.sheets) == 1:
+		if self.title != "Venues":
 			self.sheetId = self.sheets[0].get("properties", {}).get("sheetId", 1000006)
 			# print(self.sheetId)
 			requests = []
 			requests.append({
 				"addSheet": {
 					"properties": {
-						"title": "Venues"
+						"title": "Organizational Contacts"
+
 					}
 				}
 			})
@@ -166,7 +166,7 @@ class Datacenter:
 			requests.append({
 				"addSheet": {
 					"properties": {
-						"title": "Organizational Contacts"
+					"title": "Venues"						
 					}
 				}
 			})
@@ -182,7 +182,7 @@ class Datacenter:
 			response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
 		
 		#Clean up the spreadsheet if a spreadsheet was already made
-		elif self.title == "Sheet1" and len(self.sheets) > 1:
+		elif self.title != "Venues" and len(self.sheets) > 1:
 			self.sheetId = self.sheets[0].get("properties", {}).get("sheetId", 1000006)
 			# print(self.sheetId)
 			requests = []
@@ -197,6 +197,7 @@ class Datacenter:
 			}
 			response = self.service.spreadsheets().batchUpdate(spreadsheetId = self.spreadsheetId, body = body).execute()
 			
+		population = self.populate()	
 	
 	def submitVenueDatabaseInfo(self, submittedState, submittedCity, submittedName, submittedAddress, submittedZip, submittedPhone, submittedLinks, submittedContacts,  submittedEmail, submittedNotes):
 		
