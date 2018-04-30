@@ -1,5 +1,5 @@
 #Written by: Jacob S Liebenow
-#Version: 0.2
+#Version: 0.2.2
 #Stage: Alpha
 #
 #
@@ -1944,7 +1944,6 @@ class DatabaseViewer(RelativeLayout):
 	#Populate the spinners on click if the link to the database is valid and set up error catching
 	def stateSelection(self, instance):
 		self.cityPicked = False
-		print(self.stateSpinner.text)
 		if datacenter.linkValid is True:
 			datacenter.stateNames.sort()
 			self.stateSpinner.values = datacenter.stateNames
@@ -1957,7 +1956,6 @@ class DatabaseViewer(RelativeLayout):
 			self.contactSelectorSpinner.text = "Contact"
 	
 	def citySelection(self, instance): 
-		print(self.citySpinner.text)
 		if datacenter.linkValid is True:
 			if self.statePicked is True:
 				if self.stateSpinner.text in datacenter.stateNames:
@@ -1971,7 +1969,6 @@ class DatabaseViewer(RelativeLayout):
 					self.contactSelectorSpinner.text = "Contact"
 	
 	def venueSelection(self, instance):
-		print(self.venueSpinner.text)
 		if self.cityPicked is True:
 			if datacenter.linkValid is True:
 				if self.citySpinner.text in self.selectedState.cityNames:
@@ -1983,7 +1980,6 @@ class DatabaseViewer(RelativeLayout):
 	def contactSelection(self, instance):
 		self.contactSelectorSpinner.values = []
 		self.contactSelectorSpinner.text = "Contact"
-		print(self.contactSelectorSpinner.text)
 		if self.individualRadio.active == True:
 			if self.cityPicked is True:
 				if datacenter.linkValid is True:
@@ -2004,7 +2000,6 @@ class DatabaseViewer(RelativeLayout):
 							
 	#Create a handler for the infoboxes
 	def updateVenueInfoBox(self, instance):
-		print(self.venueSpinner.text)
 		if self.cityPicked is True:
 			if datacenter.linkValid is True:
 				if self.citySpinner.text in self.selectedState.cityNames:
@@ -2025,7 +2020,6 @@ class DatabaseViewer(RelativeLayout):
 							self.notesVenueLabel.text = self.selectedVenue.notes
 	
 	def updateContactInfoBox(self, instance):
-		print(self.venueSpinner.text)
 		if self.individualRadio.active == True:
 			self.groupsContactNameLabel.text = "Assoc.:"
 			if self.cityPicked is True:
